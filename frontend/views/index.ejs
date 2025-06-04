@@ -8,16 +8,44 @@
 <body>
   <div class="navbar">
     <div class="logo">
-      <img src="/img/logo.png" alt="Logo">
-      <span>Knarksino</span>
+      <a href="http://localhost:3000">
+        <img src="/img/logo.png" alt="Logo">
+      </a>
     </div>
     <div class="buttons">
-      <button>Home</button>
-      <button>Games</button>
-      <button>Shop</button>
-      <button>Login</button>
+      <button>Account</button>
+      <button>Login/Register</button>
       <button>Logout</button>
     </div>
   </div>
+
+  <div class="main-content">
+      <div class="avatar">
+        <img src="/img/avatar.png" alt="Avatar">
+       </div>
+      <div class="user">
+      <h2>Aroktyoe: $42069</h2>
+      </div>
+      </div>
+
+
+    <div class="center clickable-frame" onclick="location.href='/games'">
+      <h2>Games</h2>
+    </div>
+<!--
+    <div class="side right">
+      <h2>Shop</h2>
+      <ul class="shop-list">
+        <li>💊Tram</li>
+        <li>💉Heroin</li>
+        <li>💊Promethazine</li>
+        <li>🌿Weed</li>
+        <li>💊Meth</li>
+      </ul>
+    </div>
+    -->
+  </div>
+
+  <script src="/src/js.js"></script>
 </body>
 </html>
