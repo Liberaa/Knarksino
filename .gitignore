@@ -15,4 +15,3 @@ npm-debug.log*
 # Optional: OS or IDE files
 .DS_Store
 .vscode/
-/backend
