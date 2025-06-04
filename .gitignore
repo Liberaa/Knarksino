@@ -1,6 +1,18 @@
+# Environment variables
+.env
 
 # Dependency directories
 node_modules/
 
 # Package lock files (optional – see note below)
 package-lock.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Optional: OS or IDE files
+.DS_Store
+.vscode/
+/backend
