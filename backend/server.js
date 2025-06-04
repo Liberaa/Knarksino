@@ -11,11 +11,9 @@ app.use('/css', express.static(path.join(__dirname, '../frontend/css')));
 app.use('/img', express.static(path.join(__dirname, '../frontend/img')));
 app.use('/src', express.static(path.join(__dirname, '../frontend/src')));
 
-
-// Routes
-app.get('/', (req, res) => {
-  res.render('index');
-});
+// Use routes
+const mainRoutes = require('./routes/mainRoutes');
+app.use('/', mainRoutes);
 
 // Server
 const PORT = process.env.PORT || 3000;
