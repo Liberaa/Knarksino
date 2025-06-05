@@ -1,171 +1,174 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-    font-family: 'Courier New', monospace;
-    background: #1a0e13 url('/img/homless.png') center center no-repeat fixed;
-    background-size: cover;
-    color: #ffeef9;
-    text-align: center;
-    margin: 0;
-    padding: 40px;
-    overflow: hidden;
-    position: relative;
+  font-family: 'Courier New', monospace;
+  height: 100vh;
+  background: #000 url('/img/wave.gif') center center no-repeat fixed;
+  background-size: cover; /* or "contain" if you want no crop */
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fdfdfd;
 }
 
-/* Glitter + static overlay */
-body::after {
-    content: "";
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: url('https://media.giphy.com/media/3o7abldj0b3rxrZUxW/giphy.gif');
-    opacity: 0.05;
-    z-index: 99;
-    pointer-events: none;
+
+/* BACKGROUND COLOR BREATHING */
+@keyframes bgShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-/* SLOT MACHINE FRAME: Red-light vibes */
+/* SLOT CONTAINER — Breathing blob feel */
 .slot-machine {
-    position: relative;
-    background: rgba(20, 5, 10, 0.9);
-    padding: 40px;
-    border: 4px dashed #ff007f;
-    border-radius: 15px;
-    display: inline-block;
-    box-shadow:
-        0 0 15px #ff0055,
-        inset 0 0 30px rgba(0, 0, 0, 0.9),
-        0 0 50px #ff007f;
-    animation: redPulse 4s infinite ease-in-out, flicker 0.12s infinite;
-    z-index: 10;
+  background: linear-gradient(145deg, #2b002b, #000);
+  border: 4px solid #ff00ff88;
+  padding: 50px;
+  border-radius: 25px;
+  opacity: 0.50;
+  box-shadow:
+    0 0 25px #ff00ff88,
+    0 0 60px #00ffff33,
+    inset 0 0 20px #000;
+  backdrop-filter: blur(8px);
+  animation: pulseGlow 5s infinite ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
-@keyframes redPulse {
-    0%, 100% {
-        box-shadow: 0 0 20px #ff007f, inset 0 0 20px #000;
-    }
-    50% {
-        box-shadow: 0 0 40px #ff3399, inset 0 0 35px #000;
-    }
-}
-
-@keyframes flicker {
-    0%, 18%, 22%, 100% { opacity: 1; }
-    20%, 21%, 23% { opacity: 0.6; }
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 30px #ff00ff44, 0 0 50px #00ffff33, inset 0 0 10px #111; }
+  50% { box-shadow: 0 0 60px #ff44ff88, 0 0 80px #00ffcc44, inset 0 0 30px #222; }
 }
 
 .slot-machine h1 {
-    font-size: 3rem;
-    color: #ff80bf;
-    text-shadow: 0 0 8px #ff1493, 0 0 18px #ff0080;
-    margin-bottom: 25px;
-    animation: glowText 2.5s infinite alternate;
+  font-size: 2.5rem;
+  text-align: center;
+  color: #ff99ff;
+  text-shadow: 0 0 10px #00ffe5, 0 0 20px #ff00ff;
+  margin-bottom: 30px;
+  animation: hueShift 6s linear infinite;
 }
 
-@keyframes glowText {
-    0% { text-shadow: 0 0 8px #ff1493; }
-    100% { text-shadow: 0 0 25px #ff69b4; }
+/* Title trippy wave hue */
+@keyframes hueShift {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
 }
 
 /* REELS */
 .reels {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    background: rgba(0, 0, 0, 0.9);
-    padding: 15px;
-    border-radius: 12px;
-    border: 2px solid #3a002b;
-    box-shadow: inset 0 0 15px #ff007f;
-    margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  background: #110011;
+  border-radius: 12px;
+  box-shadow: inset 0 0 20px #000;
 }
 
-/* REEL SLOT */
+/* INDIVIDUAL REEL — Vibration */
 .reel {
-    font-size: 64px;
-    width: 80px;
-    height: 80px;
-    background: #240012;
-    border: 2px solid #3a0030;
-    border-radius: 10px;
-    color: #ff4fcf;
-    box-shadow: inset 0 0 10px #ff66cc, 0 0 6px #ff1493;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease;
-    filter: hue-rotate(-10deg);
+  font-size: 64px;
+  width: 90px;
+  height: 90px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #220022, #000);
+  border: 2px solid #ff66ff44;
+  box-shadow:
+    0 0 10px #00ffff44,
+    inset 0 0 5px #000;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: wiggle 1.5s infinite ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
-/* SPIN EFFECT */
+@keyframes wiggle {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-1px); }
+  50% { transform: translateX(1px); }
+  75% { transform: translateX(-0.5px); }
+}
+
+/* Spin burst */
 .reel.spin {
-    animation: spin 0.3s ease-in-out;
+  animation: spinTrippy 0.4s ease-in-out;
 }
 
-@keyframes spin {
-    0%   { transform: rotateY(0); }
-    50%  { transform: rotateY(180deg); }
-    100% { transform: rotateY(360deg); }
+@keyframes spinTrippy {
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(0.8) rotate(180deg); }
+  100% { transform: scale(1) rotate(360deg); }
 }
 
-/* WINNING MATCH PULSE */
 .reel.match {
-    animation: matchPulse 1.3s ease-in-out;
-    box-shadow: 0 0 15px #ff99cc, inset 0 0 15px #ffccff;
-    border-color: #ff99cc;
+  background: #00ffcc;
+  color: #000;
+  box-shadow: 0 0 20px #00ffee, inset 0 0 15px #fff;
 }
 
-@keyframes matchPulse {
-    0%   { transform: scale(1); }
-    50%  { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-/* SPIN BUTTON – Like a lipstick stain */
+/* SPIN BUTTON — Acid pad */
 #spin-button {
-    margin-top: 10px;
-    padding: 16px 50px;
-    font-size: 22px;
-    background: linear-gradient(to bottom, #ff3366, #cc0066);
-    color: #fff;
-    font-weight: bold;
-    border: 2px solid #660033;
-    border-radius: 15px;
-    box-shadow: 0 0 15px #ff3399, 0 0 25px #ff007f;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+  margin-top: 30px;
+  padding: 18px 60px;
+  font-size: 18px;
+  font-weight: bold;
+  background: linear-gradient(145deg, #ff00ff, #cc00cc);
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow:
+    0 0 10px #ff66ff,
+    0 0 20px #00ffe5;
+  transition: all 0.3s ease-in-out;
+  animation: pulseButton 3s ease-in-out infinite;
+}
+
+@keyframes pulseButton {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 #spin-button:hover {
-    background: linear-gradient(to bottom, #ff66a3, #ff1493);
-    transform: scale(1.08);
+  background: linear-gradient(145deg, #ff66ff, #00ffe5);
+  transform: scale(1.08);
+  box-shadow: 0 0 25px #ff00ff;
 }
 
-#spin-button:disabled {
-    background: #333;
-    color: #aaa;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-/* RESULT */
+/* RESULT TEXT — strobe color trip */
 #result {
-    font-size: 1.6rem;
-    color: #ffddf4;
-    text-shadow: 0 0 12px #ff66cc;
-    min-height: 40px;
-    margin-top: 20px;
+  margin-top: 25px;
+  font-size: 1.4rem;
+  color: #fff;
+  text-shadow: 0 0 10px #00ffff, 0 0 15px #ff00ff;
+  animation: colorDrift 8s infinite ease-in-out;
 }
 
-/* NEAR MISS SHAKE */
+@keyframes colorDrift {
+  0% { color: #ff00ff; }
+  25% { color: #00ffee; }
+  50% { color: #ffffff; }
+  75% { color: #cc66ff; }
+  100% { color: #ff00ff; }
+}
+
+/* Shake effect */
 .slot-machine.near-miss {
-    animation: shake 0.3s ease-in-out;
+  animation: acidShake 0.3s ease-in-out;
 }
 
-@keyframes shake {
-    0%   { transform: translateX(0); }
-    25%  { transform: translateX(-4px); }
-    50%  { transform: translateX(4px); }
-    75%  { transform: translateX(-2px); }
-    100% { transform: translateX(0); }
+@keyframes acidShake {
+  0%   { transform: rotate(0); }
+  25%  { transform: rotate(2deg); }
+  50%  { transform: rotate(-2deg); }
+  75%  { transform: rotate(1deg); }
+  100% { transform: rotate(0); }
 }
