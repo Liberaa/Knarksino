@@ -18,82 +18,115 @@
 
 body {
   margin: 0;
-  background: url('/img/wallpaper.png') no-repeat center 42%;
-  background-size: cover;
+  background-color: var(--bg-color);
   color: var(--text-color);
   font-family: "Segoe UI", sans-serif;
   transition: background 0.3s, color 0.3s;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.background-wrapper {
+  position: relative;
+  width: 100vw;
+  aspect-ratio: 3 / 2;
+  background: url('/img/wallpaper.png') no-repeat;
+  background-size: contain;
+  background-position: center -620%;
+  margin: 0 auto;
+  margin-bottom: 10px;
+}
+
+.main-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible; /*allow dropdowns to extend */
 }
 
 .navbar {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--navbar-color);
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  padding: 10px 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.2); /* transparent black overlay */
+  backdrop-filter: blur(2px);           /* frosted glass effect */
+  -webkit-backdrop-filter: blur(6px);   /* Safari support */
+  padding: 1vh 2vw;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); /* elevated shadow */
   position: relative;
   transition: background 0.3s;
 }
 
 .navbar .logo {
   position: absolute;
-  left: 50%;
+  left: 53%;
   transform: translateX(-50%);
+  margin-top: 1px;
 }
 
 .navbar .logo img {
-  height: 30px;
+  height: 5vh;
+  filter: blur(1px) brightness(85%);
 }
 
 .navbar .buttons {
   margin-left: auto;
   display: flex;
-  gap: 10px;
+  gap: 1vw;
 }
 
 .navbar button {
   background: var(--button-bg);
   color: var(--text-color);
   border: none;
-  padding: 8px 12px;
+  padding: 0.8vh 1.2vw;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 0.6vh;
   transition: background 0.3s;
+  font-size: 1.8vh;
 }
 
 .navbar button:hover {
   background: var(--button-hover);
 }
 
-.main-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 40px;
+/* Universal positioning box to anchor to background image */
+.position-box {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+/* Adjust these coordinates to match your image layout */
+.avatar {
+  top: 20%;
+  left: 24%;
+}
+
+.avatar img {
+  width: 8vh;
+  height: 8vh;
+  border-radius: 50%;
+  border: 0.2vh solid var(--text-color);
+}
+
+.user {
+  top: 14%;
+  left: 23%;
+  width: 20vw;
+  font-size: 2vh;
   text-align: center;
 }
 
-.center {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-}
-
 .clickable-frame {
-  width: 155px;
-  height: 340px;
-  border: 4px dashed var(--text-color);
-  border-radius: 12px;
+  top: 27%;
+  left: 53.1%;
+  width: 8vw;
+  height: 38vh;
+  border: 0.4vh dashed var(--text-color);
+  border-radius: 1.2vh;
   background-color: var(--card-bg);
   cursor: pointer;
   user-select: none;
-  transform: translate(573%, 22%);
   transition: transform 0.2s ease;
   display: flex;
   flex-direction: column;
@@ -101,9 +134,8 @@ body {
   justify-content: center;
 }
 
-
 .clickable-frame h2 {
-  margin-bottom: 10px;
+  margin-bottom: 1vh;
 }
 
 .frame-box {
@@ -114,67 +146,131 @@ body {
   transform: scale(1.03);
 }
 
-.avatar img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 2px solid var(--text-color);
-  margin-bottom: 10px;
-  transform: translate(445%, 190%);
-  position: absolute;
-}
-
 .side {
-  width: 200px;
-  padding: 20px;
+  width: 12vw;
+  padding: 2vh;
   background-color: var(--card-bg);
-  border-radius: 12px;
-  font-size: 18px;
+  border-radius: 1.2vh;
+  font-size: 1.8vh;
   line-height: 1.4;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 0.2vh 0.6vh rgba(0, 0, 0, 0.2);
   transition: background 0.3s;
 }
 
 .left {
-  transform: translate(110%, 72%);
-  position: absolute;
+  top: 68%;
+  left: 28%;
 }
 
 .right {
-  transform: translate(600%, -40%);
-  position: absolute;
-  width: 180px;
+  top: 60%;
+  left: 75%;
 }
 
-.user {
-  transform: translate(115%, 185%);
-  position: absolute;
-  width: 250px;
-}
-
-.shop-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  text-align: left;
-}
-
-.shop-list li {
-  margin: 8px 0;
-}
-
-body.inside-page {
-  background: url('/img/inside.png') no-repeat center 10%;
+body.inside-page .background-wrapper {
+  background: url('/img/inside.png') no-repeat center center;
   background-size: cover;
 }
 
 .inside-info {
-  margin-top: 5px;
+  margin-top: 1vh;
   text-align: center;
   color: var(--text-color);
   background-color: rgba(0, 0, 0, 0.5);
   display: inline-block;
-  padding: 5px 15px;
-  border-radius: 12px;
-  font-size: 13px;
+  padding: 1vh 2vw;
+  border-radius: 1.2vh;
+  font-size: 1.5vh;
+}
+
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-button {
+  background: var(--button-bg);
+  color: var(--text-color);
+  padding: 0.8vh 1.2vw;
+  border-radius: 0.6vh;
+  cursor: pointer;
+  font-size: 1.8vh;
+  transition: background 0.3s;
+}
+
+.dropdown-button:hover {
+  background: var(--button-hover);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--card-bg);
+  padding: 1vh;
+  border: 1px solid #555;
+  z-index: 999;
+  min-width: 12vw;
+  margin-top: 5px;
+  margin-right: 10px;
+  pointer-events: auto;
+}
+
+.dropdown-content {
+  display: none;
+  /* other styles remain */
+}
+
+.dropdown.open .dropdown-content {
+  display: block;
+}
+
+.dropdown-content input,
+.dropdown-content button {
+  display: block;
+  margin: 0.5vh 0;
+  width: 100%;
+  font-size: 1.6vh;
+}
+
+.navbar, .background-wrapper {
+  pointer-events: auto;
+}
+
+.dropdown-content {
+  z-index: 999;
+  position: absolute;
+}
+
+.dropdown-content input {
+  width: 80%; /* Adjust this value to your preference */
+  margin: 0.5vh auto; /* centers horizontally */
+  display: block;
+}
+
+.dropdown:last-child .dropdown-content {
+  left: auto; /* reset left positioning */
+  right: 0;   /* align dropdown to the right */
+}
+
+
+.dropdown-content {
+  position: absolute;
+  z-index: 9999 !important; 
+  pointer-events: auto !important;
+}
+
+.background-wrapper, 
+.main-content, 
+.navbar {
+  overflow: visible !important;
+  pointer-events: none; /* temporarily disable clicks on background elements */
+}
+
+.navbar *, 
+.dropdown *, 
+.dropdown-content * {
+  pointer-events: auto !important; /* re-enable clicks specifically for dropdown and navbar */
 }
