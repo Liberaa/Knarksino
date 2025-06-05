@@ -20,6 +20,13 @@ router.get('/inside/casino', (req, res) => {
 router.get('/inside/slot', (req, res) => {
   res.render('slot');
 });
-
+//blackjack inside
+router.get('/inside/blackjack', (req, res) => {
+  res.render('blackjack');
+});
+// leaderboard inside
+router.get('/inside/leaderboard', (req, res) => {
+  res.render('leaderboard');
+});
 
 module.exports = router;
