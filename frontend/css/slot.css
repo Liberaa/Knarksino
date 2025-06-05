@@ -1,0 +1,174 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Courier New', monospace;
+  height: 100vh;
+  background: #000 url('/img/wave.gif') center center no-repeat fixed;
+  background-size: cover; /* or "contain" if you want no crop */
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fdfdfd;
+}
+
+
+/* BACKGROUND COLOR BREATHING */
+@keyframes bgShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* SLOT CONTAINER — Breathing blob feel */
+.slot-machine {
+  background: linear-gradient(145deg, #2b002b, #000);
+  border: 4px solid #ff00ff88;
+  padding: 50px;
+  border-radius: 25px;
+  opacity: 0.50;
+  box-shadow:
+    0 0 25px #ff00ff88,
+    0 0 60px #00ffff33,
+    inset 0 0 20px #000;
+  backdrop-filter: blur(8px);
+  animation: pulseGlow 5s infinite ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 30px #ff00ff44, 0 0 50px #00ffff33, inset 0 0 10px #111; }
+  50% { box-shadow: 0 0 60px #ff44ff88, 0 0 80px #00ffcc44, inset 0 0 30px #222; }
+}
+
+.slot-machine h1 {
+  font-size: 2.5rem;
+  text-align: center;
+  color: #ff99ff;
+  text-shadow: 0 0 10px #00ffe5, 0 0 20px #ff00ff;
+  margin-bottom: 30px;
+  animation: hueShift 6s linear infinite;
+}
+
+/* Title trippy wave hue */
+@keyframes hueShift {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+/* REELS */
+.reels {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  background: #110011;
+  border-radius: 12px;
+  box-shadow: inset 0 0 20px #000;
+}
+
+/* INDIVIDUAL REEL — Vibration */
+.reel {
+  font-size: 64px;
+  width: 90px;
+  height: 90px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #220022, #000);
+  border: 2px solid #ff66ff44;
+  box-shadow:
+    0 0 10px #00ffff44,
+    inset 0 0 5px #000;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: wiggle 1.5s infinite ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-1px); }
+  50% { transform: translateX(1px); }
+  75% { transform: translateX(-0.5px); }
+}
+
+/* Spin burst */
+.reel.spin {
+  animation: spinTrippy 0.4s ease-in-out;
+}
+
+@keyframes spinTrippy {
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(0.8) rotate(180deg); }
+  100% { transform: scale(1) rotate(360deg); }
+}
+
+.reel.match {
+  background: #00ffcc;
+  color: #000;
+  box-shadow: 0 0 20px #00ffee, inset 0 0 15px #fff;
+}
+
+/* SPIN BUTTON — Acid pad */
+#spin-button {
+  margin-top: 30px;
+  padding: 18px 60px;
+  font-size: 18px;
+  font-weight: bold;
+  background: linear-gradient(145deg, #ff00ff, #cc00cc);
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow:
+    0 0 10px #ff66ff,
+    0 0 20px #00ffe5;
+  transition: all 0.3s ease-in-out;
+  animation: pulseButton 3s ease-in-out infinite;
+}
+
+@keyframes pulseButton {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+#spin-button:hover {
+  background: linear-gradient(145deg, #ff66ff, #00ffe5);
+  transform: scale(1.08);
+  box-shadow: 0 0 25px #ff00ff;
+}
+
+/* RESULT TEXT — strobe color trip */
+#result {
+  margin-top: 25px;
+  font-size: 1.4rem;
+  color: #fff;
+  text-shadow: 0 0 10px #00ffff, 0 0 15px #ff00ff;
+  animation: colorDrift 8s infinite ease-in-out;
+}
+
+@keyframes colorDrift {
+  0% { color: #ff00ff; }
+  25% { color: #00ffee; }
+  50% { color: #ffffff; }
+  75% { color: #cc66ff; }
+  100% { color: #ff00ff; }
+}
+
+/* Shake effect */
+.slot-machine.near-miss {
+  animation: acidShake 0.3s ease-in-out;
+}
+
+@keyframes acidShake {
+  0%   { transform: rotate(0); }
+  25%  { transform: rotate(2deg); }
+  50%  { transform: rotate(-2deg); }
+  75%  { transform: rotate(1deg); }
+  100% { transform: rotate(0); }
+}
