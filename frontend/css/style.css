@@ -35,6 +35,7 @@ body {
   background-position: center -620%;
   margin: 0 auto;
   margin-bottom: 10px;
+  overflow: visible;
 }
 
 .main-content {
@@ -55,6 +56,7 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); /* elevated shadow */
   position: relative;
   transition: background 0.3s;
+  z-index: 9999;
 }
 
 .navbar .logo {
@@ -122,12 +124,8 @@ body {
   left: 53.1%;
   width: 8vw;
   height: 38vh;
-  border: 0.4vh dashed var(--text-color);
-  border-radius: 1.2vh;
-  background-color: var(--card-bg);
   cursor: pointer;
   user-select: none;
-  transition: transform 0.2s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -140,10 +138,6 @@ body {
 
 .frame-box {
   display: none;
-}
-
-.frame-box:hover {
-  transform: scale(1.03);
 }
 
 .side {
@@ -168,21 +162,58 @@ body {
 }
 
 body.inside-page .background-wrapper {
-  background: url('/img/inside.png') no-repeat center center;
+  background: url('/img/inside.png') no-repeat center bottom;
   background-size: cover;
+  background-attachment: fixed;
+  height: 100vh;
+  overflow: hidden;
+
+  background-position: center calc(100% + 200px);
 }
 
 .inside-info {
   margin-top: 1vh;
-  text-align: center;
-  color: var(--text-color);
-  background-color: rgba(0, 0, 0, 0.5);
-  display: inline-block;
-  padding: 1vh 2vw;
-  border-radius: 1.2vh;
-  font-size: 1.5vh;
+  margin-left: auto;
+  margin-right: 1vw;
+  display: block;
+  width: fit-content;
 }
 
+.click-zone {
+  position: absolute;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.click-zone:hover {
+  transform: scale(1.03);
+}
+
+    .casino-zone {
+      top: 0vh;
+      left: 0;
+      width: 23vw;
+      height: 80vh;
+    }
+    .slot-zone {
+      bottom: 20vh;
+      right: 31vw;
+      width: 17vw;
+      height: 17vh;
+    }
+
+    .outside-zone {
+      top: 5vh;
+      right: 47vw;
+      width: 15vw;
+      height: 55vh;
+    }
+
+
+.inside-info h2, .inside-info h3, .inside-info h4 {
+  margin-top: 0;
+  margin-right: 1vw;
+}
 
 .dropdown {
   position: relative;
@@ -211,16 +242,9 @@ body.inside-page .background-wrapper {
   background: var(--card-bg);
   padding: 1vh;
   border: 1px solid #555;
-  z-index: 999;
+  border-radius: 0.6vh;
   min-width: 12vw;
-  margin-top: 5px;
-  margin-right: 10px;
-  pointer-events: auto;
-}
-
-.dropdown-content {
-  display: none;
-  /* other styles remain */
+  z-index: 10000
 }
 
 .dropdown.open .dropdown-content {
@@ -230,47 +254,12 @@ body.inside-page .background-wrapper {
 .dropdown-content input,
 .dropdown-content button {
   display: block;
-  margin: 0.5vh 0;
   width: 100%;
+  margin: 0.5vh 0;
   font-size: 1.6vh;
 }
 
-.navbar, .background-wrapper {
-  pointer-events: auto;
-}
-
-.dropdown-content {
-  z-index: 999;
-  position: absolute;
-}
-
-.dropdown-content input {
-  width: 80%; /* Adjust this value to your preference */
-  margin: 0.5vh auto; /* centers horizontally */
-  display: block;
-}
-
 .dropdown:last-child .dropdown-content {
-  left: auto; /* reset left positioning */
-  right: 0;   /* align dropdown to the right */
-}
-
-
-.dropdown-content {
-  position: absolute;
-  z-index: 9999 !important; 
-  pointer-events: auto !important;
-}
-
-.background-wrapper, 
-.main-content, 
-.navbar {
-  overflow: visible !important;
-  pointer-events: none; /* temporarily disable clicks on background elements */
-}
-
-.navbar *, 
-.dropdown *, 
-.dropdown-content * {
-  pointer-events: auto !important; /* re-enable clicks specifically for dropdown and navbar */
+  left: auto;
+  right: 0;
 }

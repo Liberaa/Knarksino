@@ -4,30 +4,78 @@
   <meta charset="UTF-8">
   <title>Inside - Knarksino</title>
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/inside.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body class="inside-page">
-  <div class="navbar">
-    <div class="logo">
-      <a href="http://localhost:3000">
-        <img src="/img/logo.png" alt="Logo">
-      </a>
+  <div class="background-wrapper">
+    <div class="navbar">
+      <div class="logo">
+        <a href="http://localhost:3000">
+          <img src="/img/logo.png" alt="Logo">
+        </a>
+      </div>
+      <div class="buttons">
+        <% if (user) { %>
+          <span><%= user.username %></span>
+          <a href="/logout"><button>Logout</button></a>
+        <% } else { %>
+          <div class="dropdown">
+            <div class="dropdown-button">Login ▼</div>
+            <div class="dropdown-content">
+              <form action="/login" method="POST">
+                <input name="username" placeholder="Username" required>
+                <input name="password" type="password" required placeholder="Password">
+                <button type="submit">Login</button>
+              </form>
+            </div>
+          </div>
+          <div class="dropdown">
+            <div class="dropdown-button">Register ▼</div>
+            <div class="dropdown-content">
+              <form action="/register" method="POST">
+                <input name="username" placeholder="Username" required>
+                <input name="email" placeholder="Email" required>
+                <input name="password" type="password" placeholder="Password" required>
+                <button type="submit">Register</button>
+              </form>
+            </div>
+          </div>
+        <% } %>
+      </div>
     </div>
-    <div class="buttons">
-      <button>Account</button>
-      <button>Login/Register</button>
-      <button>Logout</button>
+
+    <div class="inside-info">
+      <h2>
+        <% if (user) { %>
+          Balance: $<%= user.balance %>
+        <% } else { %>
+          user42069: $0
+        <% } %>
+      </h2>
     </div>
+
+    <div class="click-zone casino-zone" onclick="location.href='/inside/casino'"></div>
+    <div class="click-zone outside-zone" onclick="location.href='/outside'"></div>
+    <div class="click-zone slot-zone" onclick="location.href='/inside/slot'"></div>
   </div>
 
-  <div class="inside-info">
-    <h2>Aroktyoe: $4</h2>
-    <!-- Casino Button -->
-    <button onclick="window.location.href='/inside/casino'">Enter Casino</button>
-    <button onclick="window.location.href='/inside/slot'">SlutMachine</button>
-  </div>
+  <script>
+    document.querySelectorAll('.dropdown-button').forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+        button.parentElement.classList.toggle('open');
+      });
+    });
 
+    window.addEventListener('click', () => {
+      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+    });
+
+    document.querySelectorAll('.dropdown-content').forEach(content => {
+      content.addEventListener('click', e => e.stopPropagation());
+    });
+  </script>
   <script src="/src/js.js"></script>
 </body>
 </html>

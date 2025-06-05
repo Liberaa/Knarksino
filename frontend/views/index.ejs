@@ -49,11 +49,16 @@
       </div>
 
       <div class="position-box user">
-        <h2>Aroktyoe: $42069</h2>
+        <h2>
+          <% if (user) { %>
+            <%= user.username %>: $<%= user.balance %>
+          <% } else { %>
+            user42069: $0
+          <% } %>
+        </h2>
       </div>
 
       <div class="position-box clickable-frame" onclick="location.href='/inside'">
-        <h2>Click Me</h2>
       </div>
     </div>
   </div>
