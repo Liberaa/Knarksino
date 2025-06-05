@@ -1,0 +1,141 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #093830;
+  color: #fff;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.game-table {
+  display: flex;
+  flex: 1;
+  gap: 20px;
+}
+
+.wheel-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wheel-placeholder {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #222, #000);
+  border: 10px solid #999;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ccc;
+  font-size: 18px;
+}
+
+.betting-section {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  background: #1e3b34;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #000;
+}
+
+.bet-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.zero {
+  background: green;
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 4px;
+}
+
+.bet-cell {
+  background: #222;
+  text-align: center;
+  padding: 10px 0;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.bet-cell.red {
+  background-color: #b00000;
+}
+
+.bet-cell.black {
+  background-color: #111;
+  color: #eee;
+}
+
+.outside-bets {
+  margin-top: 15px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.outside {
+  background-color: #444;
+  text-align: center;
+  padding: 8px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.outside.red {
+  background: #c00;
+}
+
+.outside.black {
+  background: #000;
+  color: #fff;
+}
+
+.controls {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #082b26;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
+button {
+  padding: 10px 20px;
+  background: #f2a900;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #000;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #ffcc00;
+}
+
+.status p {
+  margin: 4px 0;
+}
