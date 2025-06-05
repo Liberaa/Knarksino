@@ -7,7 +7,18 @@ db.run(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE,
     email TEXT UNIQUE,
-    password TEXT
+    password TEXT,
+    balance INTEGER DEFAULT 0,
+    heroin INTEGER DEFAULT 0,
+    lsd INTEGER DEFAULT 0,
+    weed INTEGER DEFAULT 0,
+    cocaine INTEGER DEFAULT 0,
+    meth INTEGER DEFAULT 0,
+    mushrooms INTEGER DEFAULT 0,
+    luck INTEGER DEFAULT 1,
+    last_daily_claim INTEGER DEFAULT 0,
+    last_wheel_spin INTEGER DEFAULT 0,
+    auto_claim_until INTEGER DEFAULT 0
   )
 `);
 
