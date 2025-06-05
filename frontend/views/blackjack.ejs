@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Blackjack</title>
+  <link rel="stylesheet" href="/css/blackjack.css">
+</head>
+<body>
+  <div class="table">
+    <h1>🃏 Blackjack</h1>
+
+    <div class="dealer-area">
+      <h2>Dealer</h2>
+      <div id="dealer-cards" class="card-row"></div>
+      <div id="dealer-score" class="score-display"></div>
+    </div>
+
+    <div class="player-area">
+      <h2>You</h2>
+      <div id="player-cards" class="card-row"></div>
+      <div id="split-cards" class="card-row" style="display: none;"></div>
+      <div id="player-score" class="score-display"></div>
+    </div>
+
+    <div class="controls">
+      <button id="hit">Hit</button>
+      <button id="stand">Stand</button>
+      <button id="double">Double Down</button>
+      <button id="split" style="display: none;">Split</button>
+      <button id="restart" style="display: none;">Play Again</button>
+      <p id="status"></p>
+    </div>
+  </div>
+
+  <script src="/src/blackjack.js"></script>
+</body>
+</html>
