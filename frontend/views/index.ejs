@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+  <div class="background-wrapper">
   <div class="navbar">
     <div class="logo">
       <a href="http://localhost:3000">
@@ -13,37 +14,70 @@
       </a>
     </div>
     <div class="buttons">
-      <button>Account</button>
-      <button>Login/Register</button>
-      <button>Logout</button>
+      <% if (user) { %>
+        <span><%= user.username %></span>
+        <a href="/logout"><button>Logout</button></a>
+      <% } else { %>
+        <div class="dropdown">
+          <div class="dropdown-button">Login ▼</div>
+          <div class="dropdown-content">
+            <form action="/login" method="POST">
+              <input name="username" placeholder="Username" required>
+              <input name="password" type="password" required placeholder="Password">
+              <button type="submit">Login</button>
+            </form>
+          </div>
+        </div>
+        <div class="dropdown">
+          <div class="dropdown-button">Register ▼</div>
+          <div class="dropdown-content">
+            <form action="/register" method="POST">
+              <input name="username" placeholder="Username" required>
+              <input name="email" placeholder="Email" required>
+              <input name="password" type="password" placeholder="Password" required>
+              <button type="submit">Register</button>
+            </form>
+          </div>
+        </div>
+      <% } %>
     </div>
   </div>
 
-  <div class="main-content">
-      <div class="avatar">
+    <div class="main-content">
+      <div class="position-box avatar">
         <img src="/img/avatar.png" alt="Avatar">
-       </div>
-      <div class="user">
-      <h2>Aroktyoe: $42069</h2>
-      </div>
       </div>
 
+      <div class="position-box user">
+        <h2>Aroktyoe: $42069</h2>
+      </div>
 
-    <div class="center clickable-frame" onclick="location.href='/inside'"></div>
-<!--
-    <div class="side right">
-      <h2>Shop</h2>
-      <ul class="shop-list">
-        <li>💊Tram</li>
-        <li>💉Heroin</li>
-        <li>💊Promethazine</li>
-        <li>🌿Weed</li>
-        <li>💊Meth</li>
-      </ul>
+      <div class="position-box clickable-frame" onclick="location.href='/inside'">
+        <h2>Click Me</h2>
+      </div>
     </div>
-    -->
   </div>
+<script>
+  document.querySelectorAll('.dropdown-button').forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.stopPropagation(); // prevent closing immediately
+      // Close all other dropdowns
+      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+      // Toggle current
+      button.parentElement.classList.toggle('open');
+    });
+  });
 
+  // Close on click outside
+  window.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+  });
+
+  // Prevent closing when clicking inside form
+  document.querySelectorAll('.dropdown-content').forEach(content => {
+    content.addEventListener('click', e => e.stopPropagation());
+  });
+</script>
   <script src="/src/js.js"></script>
 </body>
 </html>
