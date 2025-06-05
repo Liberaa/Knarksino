@@ -58,9 +58,21 @@
         </h2>
       </div>
 
-      <div class="position-box clickable-frame" onclick="location.href='/inside'">
+      <div class="position-box clickable-frame" id="clickable-frame">
       </div>
     </div>
+  </div>
+    <div id="locked-message" style="
+    position: fixed;
+    display: none;
+    background: #000;
+    color: #fff;
+    padding: 0.5vh 1vw;
+    border-radius: 0.5vh;
+    font-size: 1.6vh;
+    pointer-events: none;
+    z-index: 9999;">
+    Locked
   </div>
 <script>
   document.querySelectorAll('.dropdown-button').forEach(button => {
@@ -81,6 +93,27 @@
   // Prevent closing when clicking inside form
   document.querySelectorAll('.dropdown-content').forEach(content => {
     content.addEventListener('click', e => e.stopPropagation());
+  });
+</script>
+
+<script>
+  const isLoggedIn = <%= user ? 'true' : 'false' %>;
+  const frame = document.getElementById('clickable-frame');
+  const lockedMsg = document.getElementById('locked-message');
+
+  frame.addEventListener('click', e => {
+    if (isLoggedIn) {
+      location.href = '/inside';
+    } else {
+      // Show "Locked" near cursor
+      lockedMsg.style.left = (e.clientX + 10) + 'px';
+      lockedMsg.style.top = (e.clientY - 10) + 'px';
+      lockedMsg.style.display = 'block';
+
+      setTimeout(() => {
+        lockedMsg.style.display = 'none';
+      }, 1000);
+    }
   });
 </script>
   <script src="/src/js.js"></script>
