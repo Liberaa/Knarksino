@@ -196,9 +196,26 @@ window.addEventListener("load", () => {
   updateRocket(multiplier);
 });
 
-startBtn.addEventListener("click", () => {
+startBtn.addEventListener("click", async () => {
+  const amount = parseFloat(document.getElementById("bet-amount").value);
+  const res = await fetch('/api/crash/bet', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ amount })
+  });
+
+  if (!res.ok) {
+    const msg = await res.text();
+    alert("Bet failed: " + msg);
+    return;
+  }
+
+  const data = await res.json();
+  document.getElementById("balance").textContent = data.newBalance.toFixed(2);
+
+  // Start the game
   multiplier = 0.00;
-  crashPoint = getRandomCrashPoint();
+  crashPoint = data.crashPoint;
   crashed = false;
   trailPoints = [];
 
@@ -216,14 +233,30 @@ startBtn.addEventListener("click", () => {
   animateCrash();
 });
 
-cashOutBtn.addEventListener("click", () => {
+
+cashOutBtn.addEventListener("click", async () => {
   if (!crashed) {
-    resultDisplay.textContent = `You cashed out at ${multiplier.toFixed(2)}x! 🎉`;
-    resultDisplay.style.color = '#00ff88'; // green
-    resultDisplay.style.textShadow = '0 0 6px #00ff8833';
+    const amount = parseFloat(document.getElementById("bet-amount").value);
+    const res = await fetch('/api/crash/cashout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount, multiplier })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      document.getElementById("balance").textContent = data.newBalance.toFixed(2);
+      resultDisplay.textContent = `You cashed out at ${multiplier.toFixed(2)}x! 🎉`;
+      resultDisplay.style.color = '#00ff88';
+      resultDisplay.style.textShadow = '0 0 6px #00ff8833';
+    } else {
+      resultDisplay.textContent = "Error cashing out";
+    }
+
     stopGame();
   }
 });
+
 
 function crash() {
   crashed = true;
