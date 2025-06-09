@@ -3,9 +3,9 @@ const suits = ['clubs', 'diamonds', 'hearts', 'spades'];
 const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king', 'ace'];
 
 let playerHands = [[]];
-let activeHandIndex = 0;
+let activeHandIndex = 0; //hajshdk
 let dealerHand = [];
-
+let brao = 0; // Variable to track the number of times the dealer has played
 const dealerCards = document.getElementById('dealer-cards');
 const playerCards = document.getElementById('player-cards');
 const splitCards = document.getElementById('split-cards');
