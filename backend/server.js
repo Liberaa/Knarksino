@@ -37,6 +37,9 @@ app.use('/', mainRoutes);
 const authRoutes = require('./routes/authRoutes');
 app.use('/', authRoutes);
 
+const crashRoutes = require('./routes/crashRoutes');
+app.use('/', crashRoutes);
+
 // Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
