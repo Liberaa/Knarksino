@@ -33,6 +33,12 @@ router.get('/inside/crash', (req, res) => {
   res.render('crash');
 }); 
 
+router.get('/mines', (req, res) => {
+  res.render('mines', {
+    defaultBet:    1,   // <— supply whatever defaults you want
+    defaultBombs:  3
+  });
+});
 
 
 module.exports = router;
