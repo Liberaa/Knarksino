@@ -1,0 +1,81 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0b0f1a;
+  font-family: Arial, sans-serif;
+  color: white;
+  text-align: center;
+}
+
+h1 {
+  margin-top: 20px;
+  color: #f1c40f;
+}
+
+.game-ui {
+  margin-top: 60px;
+}
+
+#multiplier {
+  font-size: 48px;
+  margin: 20px;
+  color: #00ff88;
+  transition: color 0.3s ease;
+}
+
+#multiplier.bump {
+  color: #ffcc00;
+}
+
+button {
+  font-size: 18px;
+  padding: 10px 20px;
+  margin: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#startBtn {
+  background-color: #007bff;
+  color: white;
+}
+
+#cashOutBtn {
+  background-color: #ffc107;
+  color: black;
+}
+
+#result {
+  margin-top: 20px;
+  font-size: 24px;
+}
+
+#rocket {
+  position: absolute;
+  width: 64px;
+  transform-origin: center center; /* change this line */
+  transition: transform 0.1s ease-out;
+  z-index: 1;
+}
+
+
+
+.rocket-track {
+  position: relative;
+  width: 100%;
+  height: 80vh; /* bigger height so rocket can climb */
+  overflow: hidden;
+  margin-top: 40px;
+}
+
+#trailCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+

@@ -29,4 +29,10 @@ router.get('/inside/leaderboard', (req, res) => {
   res.render('leaderboard');
 });
 
+router.get('/inside/crash', (req, res) => {
+  res.render('crash');
+}); 
+
+
+
 module.exports = router;
