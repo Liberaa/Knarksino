@@ -1,0 +1,117 @@
+/* Base setup */
+body {
+  margin: 0;
+  padding: 0;
+  background: #111;
+  font-family: 'Segoe UI', sans-serif;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Container */
+.game-container {
+  background: #181818;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px #000;
+  width: 950px;
+  text-align: center;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.header h1 {
+  font-size: 2rem;
+  color: #fff;
+}
+
+#multiplier {
+  background: #333;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  color: #66ff66;
+}
+
+/* Reel Grid */
+.reels {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  background: #222;
+  border-radius: 8px;
+  padding: 10px;
+  min-height: 490px;
+  position: relative;
+}
+
+.reel-column {
+  width: 100px;
+  height: 490px;
+  background: #111;
+  border: 2px solid #333;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Symbols */
+.symbol {
+  position: absolute;
+  width: 100px;
+  height: 70px;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  background: radial-gradient(#444, #222);
+  border: 2px solid #555;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: top 0.3s ease;
+  z-index: 1;
+}
+
+/* Highlighted win symbols */
+.symbol.win {
+  border-color: #ffd700;
+  background: radial-gradient(#ffda44, #bb8c00);
+  color: #000;
+}
+
+/* Controls */
+.controls {
+  margin-top: 20px;
+}
+
+#spinButton {
+  background-color: #e67e22;
+  color: white;
+  font-weight: bold;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#spinButton:hover {
+  background-color: #d35400;
+}
+
+#message {
+  margin-top: 10px;
+  font-size: 1.1rem;
+  min-height: 24px;
+}

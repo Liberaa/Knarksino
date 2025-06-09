@@ -1,0 +1,23 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: url('/img/outside3.png') no-repeat center center;
+  background-size: cover;
+  position: relative;
+}
+
+/* Invisible clickable area over the door */
+.garage-link {
+  position: absolute;
+  top: 37%;   /* Adjust based on actual door position */
+  left: 14%;  /* Adjust based on actual door position */
+  width: 7%;  /* Adjust width to fit the door */
+  height: 20%; /* Adjust height to fit the door */
+  cursor: pointer;
+  z-index: 10;
+}
