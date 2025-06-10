@@ -73,13 +73,24 @@ function updateRocket(multiplier) {
   const angleDeg = angle * 180 / Math.PI;
   rocket.style.transform = `rotate(${-angleDeg + 90}deg)`;
 
-  // === Trail: simulates left/downward curve (exponential up motion)
+  // === Trail: simulates left/downward curve (exponential up motion) with immediate chaos
   const dx = Math.cos(-angle) * distance;
   const dy = Math.sin(-angle) * distance;
   const trailX = centerX - dx;
   const trailY = centerY + dy - 2;
   const initialTrailAngleOffset = 3 * Math.PI / 180;
-  trailPoints.push({ x: trailX + offsetX, y: trailY + offsetY });
+  
+  // Add immediate chaos to trail points from the very beginning
+  const earlyIntensity = Math.min(1, multiplier / 2); // Ramps up by 2x instead of 20x
+  const chaosFactor = 1 + earlyIntensity * 4; // Base chaos that grows
+  const chaosX = (Math.random() - 0.5) * chaosFactor;
+  const chaosY = (Math.random() - 0.5) * chaosFactor;
+  
+  trailPoints.push({ 
+    x: trailX + offsetX + chaosX, 
+    y: trailY + offsetY + chaosY 
+  });
+  
 
   if (trailPoints.length > 600) trailPoints.shift();
 
@@ -92,7 +103,7 @@ const adjustedCenterX = centerX + offsetX;
 const adjustedCenterY = centerY + offsetY;
 const maxTrailDistance = 200;
 const globalTrailYOffset = multiplier * 1;
-const globalTrailXOffset = multiplier * 0.5;
+const globalTrailXOffset = multiplier * 0.5 - 20;
 
 for (let i = 0; i < trailPoints.length - 1; i++) {
   const dx1 = trailPoints[i].x - adjustedCenterX ;
@@ -102,31 +113,45 @@ for (let i = 0; i < trailPoints.length - 1; i++) {
 
   const dist1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
   const dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-  const intensity = Math.min(1, (multiplier - 1) / 20);
+  // Much more aggressive intensity that starts immediately and ramps up faster
+  const intensity = Math.min(1, Math.pow(Math.max(0.5, multiplier) / 3, 1.5));
+
 
   if (dist1 < maxTrailDistance && dist2 < maxTrailDistance) {
     const p1 = rotateAroundCenter(trailPoints[i], rotateAngle, adjustedCenterX , adjustedCenterY );
     const p2 = rotateAroundCenter(trailPoints[i + 1], rotateAngle, adjustedCenterX , adjustedCenterY );
     p1.y -= globalTrailYOffset;
     p2.y -= globalTrailYOffset;
-    if (intensity > 0.2) {
-      const jitter = intensity * 3;
-      p2.x += (Math.random() - 0.5) * jitter;
-      p2.y += (Math.random() - 0.5) * jitter;
-    }
+    
+    // Much more violent jitter that starts immediately
+    const baseJitter = 2; // Base jitter even at low multipliers
+    const violentJitter = baseJitter + intensity * 12; // Up to 14 pixels of jitter
+    const explosiveJitter = Math.pow(intensity, 2) * 8; // Exponential additional chaos
+    
+    p1.x += (Math.random() - 0.5) * violentJitter;
+    p1.y += (Math.random() - 0.5) * violentJitter;
+    p2.x += (Math.random() - 0.5) * (violentJitter + explosiveJitter);
+    p2.y += (Math.random() - 0.5) * (violentJitter + explosiveJitter);
 
     // Fade effect
-    const alpha = 1 - i / trailPoints.length;
-    // Trail violence factor based on multiplier
+    const alpha = (1 - i / trailPoints.length) * (0.7 + intensity * 0.3);
+    
+    // Much thicker, more violent line width
+    ctx.lineWidth = 3 + intensity * 8 + Math.random() * 3;
 
-    // Line width gets thicker
-    ctx.lineWidth = 2 + intensity * 4;
-
-    // Trail color flickers with more orange/yellow
+    // More extreme color transitions with flickering
+    const flicker = Math.random() * 0.3;
     const r = 255;
-    const g = Math.floor(100 + 155 * intensity);
-    const b = Math.floor(100 * (1 - intensity));
-    ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
+    const g = Math.floor(80 + 175 * intensity + flicker * 50);
+    const b = Math.floor(50 * (1 - intensity) + flicker * 30);
+    
+    // Add white-hot core effect at high intensity
+    if (intensity > 0.6) {
+      const whiteHot = (intensity - 0.6) * 2.5;
+      ctx.strokeStyle = `rgba(${255}, ${255 - whiteHot * 50}, ${255 - whiteHot * 100}, ${alpha})`;
+    } else {
+      ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
+    }
 
     ctx.beginPath();
     p1.x += globalTrailXOffset;
@@ -134,6 +159,14 @@ for (let i = 0; i < trailPoints.length - 1; i++) {
     ctx.moveTo(p1.x, p1.y);
     ctx.lineTo(p2.x, p2.y);
     ctx.stroke();
+    
+    // Add sparks/particles at higher intensities
+    if (intensity > 0.3 && Math.random() < intensity * 0.4) {
+      const sparkX = p2.x + (Math.random() - 0.5) * 20;
+      const sparkY = p2.y + (Math.random() - 0.5) * 20;
+      ctx.fillStyle = `rgba(255, ${200 + Math.random() * 55}, ${100 + Math.random() * 100}, ${alpha * 0.8})`;
+      ctx.fillRect(sparkX, sparkY, 2 + Math.random() * 3, 2 + Math.random() * 3);
+    }
   }
 }
 const visibleStartIndex = trailPoints.findIndex(p => {
@@ -234,8 +267,10 @@ startBtn.addEventListener("click", async () => {
 });
 
 
+let cashedOut = false; // Add this at the top with other state variables
+
 cashOutBtn.addEventListener("click", async () => {
-  if (!crashed) {
+  if (!crashed && !cashedOut) {
     const amount = parseFloat(document.getElementById("bet-amount").value);
     const res = await fetch('/api/crash/cashout', {
       method: 'POST',
@@ -246,14 +281,19 @@ cashOutBtn.addEventListener("click", async () => {
     if (res.ok) {
       const data = await res.json();
       document.getElementById("balance").textContent = data.newBalance.toFixed(2);
-      resultDisplay.textContent = `You cashed out at ${multiplier.toFixed(2)}x! 🎉`;
+      
+      // Calculate winnings
+      const totalPayout = amount * multiplier;
+      const winnings = totalPayout; // Profit = total payout minus original bet
+      
+      resultDisplay.textContent = `You cashed out at ${multiplier.toFixed(2)}x with $${winnings.toFixed(2)}`;
       resultDisplay.style.color = '#00ff88';
       resultDisplay.style.textShadow = '0 0 6px #00ff8833';
+      cashedOut = true;
+      cashOutBtn.disabled = true;
     } else {
       resultDisplay.textContent = "Error cashing out";
     }
-
-    stopGame();
   }
 });
 

@@ -21,17 +21,17 @@ let freeSpinActive = false;
 let freeSpinsLeft  = 0;
 
 // symbols
-const WILD_SYMBOL  = '❓';
+const WILD_SYMBOL  = '🃏';
 const BONUS_SYMBOL = '🆓';
 const weightedSymbols = [
-  { symbol: '🧱', weight: 20 },
-  { symbol: '🟣', weight: 15 },
-  { symbol: '🟤', weight: 15 },
-  { symbol: '🟡', weight: 10 },
-  { symbol: '🟢', weight: 10 },
-  { symbol: '🔵', weight: 10 },
-  { symbol: '💀', weight: 10 },
-  { symbol: '🎯', weight: 5  },
+  { symbol: '🪨', weight: 20 },
+  { symbol: '🚬', weight: 15 },
+  { symbol: '💉', weight: 15 },
+  { symbol: '💊', weight: 10 },
+  { symbol: '🦠', weight: 10 },
+  { symbol: '𓀐', weight: 10 },
+  { symbol: '👩🏿‍🦽‍➡️', weight: 10 },
+  { symbol: '🍄‍🟫', weight: 5  },
   { symbol: WILD_SYMBOL,  weight: 1  },  // wild
   { symbol: BONUS_SYMBOL, weight: 2  }   // bonus scatter
 ];
@@ -54,35 +54,39 @@ function createReels() {
     const col = document.createElement('div');
     col.className = 'reel-column spinning';
 
-    // choose rows and remember them
-    const rows = MIN_ROWS + Math.floor(Math.random()*(MAX_ROWS-MIN_ROWS+1));
+    const rows = MIN_ROWS + Math.floor(Math.random() * (MAX_ROWS - MIN_ROWS + 1));
     col.dataset.rows = rows;
     const h = COLUMN_HEIGHT_PX / rows;
 
-    // fill the column bottom→top
     for (let r = 0; r < rows; r++) {
       const sym = document.createElement('div');
-      sym.className      = 'symbol';
-      sym.textContent    = randomSymbol();
-      sym.style.height   = `${h}px`;
+      sym.className = 'symbol';
+      sym.textContent = randomSymbol();
+      sym.style.height = `${h}px`;
       sym.dataset.height = h;
 
-      // bottom index = rows-1 - r
-      const bottomIndex = rows - 1 - r;
-      sym.style.top     = `${bottomIndex*h}px`;
+      // Start above the view (offscreen), staggered for cascade effect
+      sym.style.top = `${-h * (r + 1)}px`;
 
       col.appendChild(sym);
+
+      // Animate into place with staggered timing
+      setTimeout(() => {
+        sym.style.transition = 'top 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+        sym.style.top = `${(rows - 1 - r) * h}px`;
+      }, 50 + r * 80); // Adjust this timing for more or less cascade
     }
 
     reelsContainer.appendChild(col);
   }
 
-  // let the CSS spin-in finish (0.6s) then settle
-  setTimeout(()=> {
+  // Let the "spinning" class stay during the initial fall
+  setTimeout(() => {
     document.querySelectorAll('.reel-column')
-      .forEach(c=> c.classList.remove('spinning'));
-  }, 600);
+      .forEach(c => c.classList.remove('spinning'));
+  }, 800);
 }
+
 
 // remove old win flags
 function clearWins() {
