@@ -1,4 +1,4 @@
-// game.js — fully corrected
+// game.js — fully corrected with PNG symbols
 
 // grab DOM elements
 const reelsContainer    = document.getElementById('reels');
@@ -20,31 +20,31 @@ let avalancheCount = 0;
 let freeSpinActive = false;
 let freeSpinsLeft  = 0;
 
-// symbols
-const WILD_SYMBOL  = '🃏';
-const BONUS_SYMBOL = '🆓';
+// symbols (now using PNG filenames)
+const WILD_SYMBOL  = 'set9.png';
+const BONUS_SYMBOL = 'set10.png';
 const weightedSymbols = [
-  { symbol: '🪨', weight: 20 },
-  { symbol: '🚬', weight: 15 },
-  { symbol: '💉', weight: 15 },
-  { symbol: '💊', weight: 10 },
-  { symbol: '🦠', weight: 10 },
-  { symbol: '𓀐', weight: 10 },
-  { symbol: '👩🏿‍🦽‍➡️', weight: 10 },
-  { symbol: '🍄‍🟫', weight: 5  },
+  { symbol: 'set1.png', weight: 20 },
+  { symbol: 'set2.png', weight: 15 },
+  { symbol: 'set3.png', weight: 15 },
+  { symbol: 'set4.png', weight: 10 },
+  { symbol: 'set5.png', weight: 10 },
+  { symbol: 'set6.png', weight: 10 },
+  { symbol: 'set7.png', weight: 10 },
+  { symbol: 'set8.png', weight: 5  },
   { symbol: WILD_SYMBOL,  weight: 1  },  // wild
   { symbol: BONUS_SYMBOL, weight: 2  }   // bonus scatter
 ];
 
-// pick a random symbol by weight
+// pick a random symbol by weight and return full image path
 function randomSymbol() {
-  const total = weightedSymbols.reduce((sum,o)=> sum+o.weight, 0);
-  let r = Math.random()*total;
+  const total = weightedSymbols.reduce((sum, o) => sum + o.weight, 0);
+  let r = Math.random() * total;
   for (let o of weightedSymbols) {
-    if (r < o.weight) return o.symbol;
+    if (r < o.weight) return `/img/symbols/${o.symbol}`;
     r -= o.weight;
   }
-  return weightedSymbols[0].symbol;
+  return `/img/symbols/${weightedSymbols[0].symbol}`;
 }
 
 // build & animate reels
@@ -61,37 +61,44 @@ function createReels() {
     for (let r = 0; r < rows; r++) {
       const sym = document.createElement('div');
       sym.className = 'symbol';
-      sym.textContent = randomSymbol();
+
+      // create img element for the symbol
+      const imgSrc = randomSymbol();
+      const img = document.createElement('img');
+      img.src = imgSrc;
+      img.alt = imgSrc.split('/').pop(); // use filename as alt text
+      img.className = 'symbol-img';
+      sym.appendChild(img);
+
       sym.style.height = `${h}px`;
       sym.dataset.height = h;
+      sym.dataset.symbol = imgSrc; // store symbol path for win comparisons
 
       // Start above the view (offscreen), staggered for cascade effect
       sym.style.top = `${-h * (r + 1)}px`;
-
       col.appendChild(sym);
 
       // Animate into place with staggered timing
       setTimeout(() => {
         sym.style.transition = 'top 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
         sym.style.top = `${(rows - 1 - r) * h}px`;
-      }, 50 + r * 80); // Adjust this timing for more or less cascade
+      }, 50 + r * 80); // Adjust timing for cascade effect
     }
 
     reelsContainer.appendChild(col);
   }
 
-  // Let the "spinning" class stay during the initial fall
+  // Let the "spinning" class remain during the initial fall
   setTimeout(() => {
     document.querySelectorAll('.reel-column')
       .forEach(c => c.classList.remove('spinning'));
   }, 800);
 }
 
-
 // remove old win flags
 function clearWins() {
   document.querySelectorAll('.symbol.win')
-    .forEach(s=> s.classList.remove('win'));
+    .forEach(s => s.classList.remove('win'));
 }
 
 // strict left→right match, starting only on non-wild in col 0
@@ -104,20 +111,19 @@ function checkWin() {
   function extendPath(path, colIndex, targetSymbol) {
     const nextCol = cols[colIndex];
     const matches = Array.from(nextCol.children)
-      .filter(s => s.textContent === targetSymbol || s.textContent === WILD_SYMBOL);
-
+      .filter(s => s.dataset.symbol === targetSymbol || s.dataset.symbol === `/img/symbols/${WILD_SYMBOL}`);
     return matches.map(match => [...path, match]);
   }
 
   // start from every symbol in column 0
   Array.from(cols[0].children).forEach(start => {
-    const startSymbol = start.textContent;
+    const startSymbol = start.dataset.symbol;
 
     // possible base symbols to try if the start is wild
-    const baseCandidates = startSymbol === WILD_SYMBOL
+    const baseCandidates = startSymbol === `/img/symbols/${WILD_SYMBOL}`
       ? Array.from(cols[1].children)
-          .map(s => s.textContent)
-          .filter(s => s !== WILD_SYMBOL)
+          .map(s => s.dataset.symbol)
+          .filter(s => s !== `/img/symbols/${WILD_SYMBOL}`)
       : [startSymbol];
 
     baseCandidates.forEach(candidate => {
@@ -126,12 +132,10 @@ function checkWin() {
       // walk through each column and expand paths
       for (let i = 1; i < cols.length; i++) {
         const newPaths = [];
-
         for (const path of paths) {
           const extensions = extendPath(path, i, candidate);
           newPaths.push(...extensions);
         }
-
         if (newPaths.length === 0) break;
         paths = newPaths;
       }
@@ -149,13 +153,11 @@ function checkWin() {
   return hasWin;
 }
 
-
-
-// bonus if at least one 🆓 in each of reels 0,1,2
+// bonus trigger if at least one bonus symbol in each of reels 0,1,2
 function checkBonusTrigger() {
   const cols = Array.from(reelsContainer.children);
-  return [0,1,2].every(i=>
-    Array.from(cols[i].children).some(s=> s.textContent===BONUS_SYMBOL)
+  return [0, 1, 2].every(i =>
+    Array.from(cols[i].children).some(s => s.dataset.symbol === `/img/symbols/${BONUS_SYMBOL}`)
   );
 }
 
@@ -169,25 +171,25 @@ function startFreeSpins() {
 // free-spin multiplier progression
 function freeMultiplier() {
   const idx = 10 - freeSpinsLeft;
-  return FREE_MULTIPLIERS[Math.min(idx, FREE_MULTIPLIERS.length-1)];
+  return FREE_MULTIPLIERS[Math.min(idx, FREE_MULTIPLIERS.length - 1)];
 }
 
 // remove wins, drop survivors, refill top — using each column’s own row-count
 function performAvalanche() {
   document.querySelectorAll('.reel-column').forEach(col => {
-    const rows = parseInt(col.dataset.rows,10);
+    const rows = parseInt(col.dataset.rows, 10);
     let h = 0;
     const slots = [];
 
     // gather slots by their row index
     Array.from(col.children).forEach(el => {
       h = parseFloat(el.dataset.height);
-      const rowIdx = Math.round(parseFloat(el.style.top)/h);
+      const rowIdx = Math.round(parseFloat(el.style.top) / h);
       slots[rowIdx] = el;
     });
 
     // remove wins
-    slots.forEach((el,i) => {
+    slots.forEach((el, i) => {
       if (el && el.classList.contains('win')) {
         col.removeChild(el);
         slots[i] = null;
@@ -198,7 +200,7 @@ function performAvalanche() {
     let write = rows - 1;
     for (let read = rows - 1; read >= 0; read--) {
       if (slots[read]) {
-        slots[read].style.top = `${write*h}px`;
+        slots[read].style.top = `${write * h}px`;
         slots[write] = slots[read];
         write--;
       }
@@ -207,18 +209,26 @@ function performAvalanche() {
     // refill empty spots at top
     for (let r = write; r >= 0; r--) {
       const sym = document.createElement('div');
-      sym.className      = 'symbol';
-      sym.textContent    = randomSymbol();
-      sym.style.height   = `${h}px`;
+      sym.className = 'symbol';
+      
+      const imgSrc = randomSymbol();
+      const img = document.createElement('img');
+      img.src = imgSrc;
+      img.alt = imgSrc.split('/').pop();
+      img.className = 'symbol-img';
+      sym.appendChild(img);
+      
+      sym.style.height = `${h}px`;
       sym.dataset.height = h;
+      sym.dataset.symbol = imgSrc;
       // start just above view
-      sym.style.top      = `${-h*(write-r+1)}px`;
+      sym.style.top = `${-h * (write - r + 1)}px`;
       col.appendChild(sym);
 
       // animate into place
-      setTimeout(()=>{
+      setTimeout(() => {
         sym.style.transition = 'top 0.3s ease';
-        sym.style.top        = `${r*h}px`;
+        sym.style.top = `${r * h}px`;
       }, 20);
     }
   });
@@ -228,11 +238,11 @@ function performAvalanche() {
 function triggerAvalanche() {
   performAvalanche();
 
-  setTimeout(()=>{
+  setTimeout(() => {
     const again = checkWin();
-    const mult  = freeSpinActive
+    const mult = freeSpinActive
       ? freeMultiplier()
-      : BASE_MULTIPLIERS[Math.min(avalancheCount, BASE_MULTIPLIERS.length-1)];
+      : BASE_MULTIPLIERS[Math.min(avalancheCount, BASE_MULTIPLIERS.length - 1)];
 
     multiplierDisplay.textContent = `Multiplier: x${mult}`;
 
@@ -272,8 +282,8 @@ function spin() {
 
   createReels();
 
-  // after the 0.6s spin-in…
-  setTimeout(()=>{
+  // after the spin-in animation…
+  setTimeout(() => {
     if (checkBonusTrigger() && !freeSpinActive) startFreeSpins();
 
     const win  = checkWin();
