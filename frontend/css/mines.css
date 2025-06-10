@@ -1,0 +1,80 @@
+/* Mines 5×5 game board */
+:root {
+  --cell-size: 70px;
+  --gem: #0f0;          /* safe */
+  --bomb: #d11;         /* bomb */
+  --bg: #0d1b2a;        /* dark navy */
+  --accent: #17c3b2;    /* teal */
+  font-family: system-ui, sans-serif;
+  color: #fff;
+}
+
+body {
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+}
+
+h1 {
+  margin-top: 0;
+  font-weight: 600;
+}
+
+#controls {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+#controls input,
+#controls button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+#controls button {
+  cursor: pointer;
+  background: var(--accent);
+  color: #000;
+  font-weight: 600;
+}
+
+#status {
+  margin-top: 10px;
+  min-height: 24px;
+}
+
+#board {
+  display: grid;
+  grid-template-columns: repeat(5, var(--cell-size));
+  grid-auto-rows: var(--cell-size);
+  gap: 6px;
+}
+
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  background: #1b263b;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1.6rem;
+  user-select: none;
+  transition: background 0.2s ease;
+}
+
+.cell.revealed.safe {
+  background: var(--gem);
+}
+
+.cell.revealed.bomb {
+  background: var(--bomb);
+}

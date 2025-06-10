@@ -11,6 +11,10 @@ router.get('/inside', (req, res) => {
   res.render('inside');
 });
 
+router.get('/outside', (req, res) => {
+  res.render('outside');
+});
+
 // Casino page inside
 // Casino page
 router.get('/inside/casino', (req, res) => {
@@ -33,6 +37,17 @@ router.get('/inside/crash', (req, res) => {
   res.render('crash');
 }); 
 
+router.get('/garage', (req, res) => {
+  res.render('garage');
+});
+
+
+router.get('/mines', (req, res) => {
+  res.render('mines', {
+    defaultBet:    1,   // <— supply whatever defaults you want
+    defaultBombs:  3
+  });
+});
 
 
 module.exports = router;
