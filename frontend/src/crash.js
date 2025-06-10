@@ -198,6 +198,7 @@ if (visibleStartIndex > 4) {
 
 
 
+
 function animateCrash() {
   const speed = getSpeed(multiplier);
   multiplier += 0.05;
