@@ -32,8 +32,8 @@ const weightedSymbols = [
   { symbol: '🔵', weight: 10 },
   { symbol: '💀', weight: 10 },
   { symbol: '🎯', weight: 5  },
-  { symbol: WILD_SYMBOL,  weight: 5  },  // wild
-  { symbol: BONUS_SYMBOL, weight: 5  }   // bonus scatter
+  { symbol: WILD_SYMBOL,  weight: 1  },  // wild
+  { symbol: BONUS_SYMBOL, weight: 2  }   // bonus scatter
 ];
 
 // pick a random symbol by weight
@@ -96,30 +96,56 @@ function checkWin() {
   const cols = Array.from(reelsContainer.children);
   let hasWin = false;
 
-  // starters in column 0
-  Array.from(cols[0].children)
-    .filter(s=> s.textContent !== WILD_SYMBOL)
-    .forEach(start => {
-      const base = start.textContent;
-      const path = [ start ];
+  // helper to extend a chain into the next column
+  function extendPath(path, colIndex, targetSymbol) {
+    const nextCol = cols[colIndex];
+    const matches = Array.from(nextCol.children)
+      .filter(s => s.textContent === targetSymbol || s.textContent === WILD_SYMBOL);
 
-      // walk subsequent columns
+    return matches.map(match => [...path, match]);
+  }
+
+  // start from every symbol in column 0
+  Array.from(cols[0].children).forEach(start => {
+    const startSymbol = start.textContent;
+
+    // possible base symbols to try if the start is wild
+    const baseCandidates = startSymbol === WILD_SYMBOL
+      ? Array.from(cols[1].children)
+          .map(s => s.textContent)
+          .filter(s => s !== WILD_SYMBOL)
+      : [startSymbol];
+
+    baseCandidates.forEach(candidate => {
+      let paths = [[start]];
+
+      // walk through each column and expand paths
       for (let i = 1; i < cols.length; i++) {
-        const match = Array.from(cols[i].children).find(
-          s=> s.textContent === base || s.textContent === WILD_SYMBOL
-        );
-        if (match) path.push(match);
-        else break;
+        const newPaths = [];
+
+        for (const path of paths) {
+          const extensions = extendPath(path, i, candidate);
+          newPaths.push(...extensions);
+        }
+
+        if (newPaths.length === 0) break;
+        paths = newPaths;
       }
 
-      if (path.length >= 3) {
-        hasWin = true;
-        path.forEach(s=> s.classList.add('win'));
-      }
+      // mark wins if path length >= 3
+      paths.forEach(path => {
+        if (path.length >= 3) {
+          hasWin = true;
+          path.forEach(s => s.classList.add('win'));
+        }
+      });
     });
+  });
 
   return hasWin;
 }
+
+
 
 // bonus if at least one 🆓 in each of reels 0,1,2
 function checkBonusTrigger() {
@@ -273,7 +299,7 @@ function spin() {
         isSpinning = false;
       }
     }
-  }, 650);
+  }, 1650);
 }
 
 spinButton.addEventListener('click', spin);
