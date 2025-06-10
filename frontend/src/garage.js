@@ -1,12 +1,12 @@
-// game.js — Megaway with Balance Integration and Explosions
+""// game.js — Megaway with Balance Integration and Explosions + Accurate Winnings
 
 // DOM Elements
 const reelsContainer = document.getElementById('reels');
 const spinButton = document.getElementById('spinButton');
 const multiplierDisplay = document.getElementById('multiplier');
 const message = document.getElementById('message');
-const balanceDisplay = document.getElementById('balance'); // ⬅️ Add this to HTML
-const betInput = document.getElementById('bet-amount'); // ⬅️ Add this to HTML
+const balanceDisplay = document.getElementById('balance');
+const betInput = document.getElementById('bet-amount');
 
 // Constants
 const REEL_COUNT = 6;
@@ -21,7 +21,9 @@ let isSpinning = false;
 let avalancheCount = 0;
 let freeSpinActive = false;
 let freeSpinsLeft = 0;
-let balance = 1000; // ⬅️ starting balance
+let balance = 1000;
+let currentBet = 0;
+let totalWinSymbols = 0;
 
 // Symbols
 const WILD_SYMBOL = 'set9.png';
@@ -58,28 +60,23 @@ function createReels() {
   for (let c = 0; c < REEL_COUNT; c++) {
     const col = document.createElement('div');
     col.className = 'reel-column spinning';
-
     const rows = MIN_ROWS + Math.floor(Math.random() * (MAX_ROWS - MIN_ROWS + 1));
     col.dataset.rows = rows;
     const h = COLUMN_HEIGHT_PX / rows;
-
     for (let r = 0; r < rows; r++) {
       const sym = document.createElement('div');
       sym.className = 'symbol';
-
       const imgSrc = randomSymbol();
       const img = document.createElement('img');
       img.src = imgSrc;
       img.alt = imgSrc.split('/').pop();
       img.className = 'symbol-img';
       sym.appendChild(img);
-
       sym.style.height = `${h}px`;
       sym.dataset.height = h;
       sym.dataset.symbol = imgSrc;
       sym.style.top = `${-h * (r + 1)}px`;
       col.appendChild(sym);
-
       setTimeout(() => {
         sym.style.transition = 'top 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
         sym.style.top = `${(rows - 1 - r) * h}px`;
@@ -88,7 +85,6 @@ function createReels() {
         setTimeout(() => sym.classList.remove('bounce', 'land'), 600);
       }, 50 + r * 80);
     }
-
     reelsContainer.appendChild(col);
   }
   setTimeout(() => {
@@ -104,20 +100,18 @@ function checkWin() {
   clearWins();
   const cols = Array.from(reelsContainer.children);
   let hasWin = false;
-
   function extendPath(path, colIndex, targetSymbol) {
     const nextCol = cols[colIndex];
     const matches = Array.from(nextCol.children)
       .filter(s => s.dataset.symbol === targetSymbol || s.dataset.symbol === `/img/symbols/${WILD_SYMBOL}`);
     return matches.map(match => [...path, match]);
   }
-
+  totalWinSymbols = 0;
   Array.from(cols[0].children).forEach(start => {
     const startSymbol = start.dataset.symbol;
     const baseCandidates = startSymbol === `/img/symbols/${WILD_SYMBOL}`
       ? Array.from(cols[1].children).map(s => s.dataset.symbol).filter(s => s !== `/img/symbols/${WILD_SYMBOL}`)
       : [startSymbol];
-
     baseCandidates.forEach(candidate => {
       let paths = [[start]];
       for (let i = 1; i < cols.length; i++) {
@@ -129,16 +123,15 @@ function checkWin() {
         if (newPaths.length === 0) break;
         paths = newPaths;
       }
-
       paths.forEach(path => {
         if (path.length >= 3) {
           hasWin = true;
           path.forEach(s => s.classList.add('win'));
+          totalWinSymbols += path.length;
         }
       });
     });
   });
-
   return hasWin;
 }
 
@@ -154,6 +147,15 @@ function startFreeSpins() {
   freeSpinsLeft = 10;
   message.textContent = '🎁 Bonus! 10 Free Spins!';
 }
+
+function showWinAmount(amount) {
+  const winEl = document.createElement('div');
+  winEl.className = 'win-display';
+  winEl.textContent = `+ $${amount.toFixed(2)} WIN!`;
+  message.appendChild(winEl);
+  setTimeout(() => winEl.remove(), 2500);
+}
+
 
 function freeMultiplier() {
   const idx = 10 - freeSpinsLeft;
@@ -257,7 +259,9 @@ function triggerAvalanche() {
     if (again) {
       avalancheCount++;
       message.textContent = `💥 Avalanche x${mult}`;
-      balance += mult * 10; // winnings = base * multiplier
+      const payout = currentBet * mult * (totalWinSymbols / 3);
+      balance += payout;
+      showWinAmount(payout);
       updateBalanceDisplay();
       setTimeout(triggerAvalanche, 800);
     } else {
@@ -292,6 +296,7 @@ function spin() {
   message.textContent = '';
   spinButton.disabled = true;
   balance -= betAmount;
+  currentBet = betAmount;
   updateBalanceDisplay();
   createReels();
   setTimeout(() => {
