@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const db = require('../db');
 
 // Home page
 router.get('/', (req, res) => {
@@ -38,8 +39,41 @@ router.get('/inside/crash', (req, res) => {
 }); 
 
 router.get('/garage', (req, res) => {
-  res.render('garage');
+  if (!req.session.user) {
+    // Guest user
+    return res.render('garage', {
+      user: {
+        id: null,
+        username: 'user42069',
+        balance: 0
+      }
+    });
+  }
+
+  db.get('SELECT username, balance FROM users WHERE id = ?', [req.session.user.id], (err, row) => {
+    if (err || !row) {
+      // Fallback to guest if error or user not found
+      return res.render('garage', {
+        user: {
+          id: null,
+          username: 'user42069',
+          balance: 0
+        }
+      });
+    }
+
+    // Logged-in user
+    req.session.user.balance = row.balance;
+    res.render('garage', {
+      user: {
+        id: req.session.user.id,
+        username: row.username,
+        balance: row.balance
+      }
+    });
+  });
 });
+
 
 
 router.get('/mines', (req, res) => {

@@ -215,3 +215,29 @@ body {
   0%   { opacity: 1; }
   100% { opacity: 0; }
 }
+
+h1 {
+  margin-top: 30px;
+  color: #c8c8c8ab;
+  font-size: 2.5rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px #ffffff77;
+}
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #111;
+  color: #fff;
+  padding: 10px 20px;
+  z-index: 999;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+body {
+  padding-top: 60px; /* so game-container isn't covered */
+}
