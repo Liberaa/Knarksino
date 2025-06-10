@@ -13,24 +13,28 @@
       <div id="multiplier">Multiplier: x1</div>
     </div>
 
-    <!-- Balance + Bet Input -->
+    <!-- 💰 Balance + Bet Input -->
     <div class="game-ui">
       <div id="balance-display">
-        Balance: $<span id="balance"><%= user ? user.balance.toFixed(2) : "0.00" %></span>
+        Balance: $<span id="balance"><%= user ? user.balance.toFixed(2) : "1000.00" %></span>
       </div>
       <div id="bet-input">
         Bet amount: $<input type="number" id="bet-amount" value="100" min="1">
       </div>
     </div>
 
+    <!-- 🎰 Game Reels -->
     <div class="reels" id="reels"></div>
 
+    <!-- 🎮 Controls -->
     <div class="controls">
       <button id="spinButton">🎯 Spin</button>
       <div id="message"></div>
     </div>
   </div>
 
+  <!-- 📜 Game Logic -->
   <script src="/src/garage.js"></script>
 </body>
+
 </html>
