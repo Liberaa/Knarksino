@@ -24,6 +24,11 @@
       margin-right: 5px;
     }
 
+    .logout {
+      margin-right: 30px;
+    }
+
+
     body {
       padding-top: 60px;
     }
@@ -31,12 +36,12 @@
 </head>
 <body>
   <div class="topbar">
-    <% if (user) { %>
+    <% if (user && user.id) { %>
       <div>
         <strong><%= user.username %></strong> |
-        Balance: $<span id="topbar-balance"><%= user.balance.toFixed(2) %></span>
+        Balance: <span id="topbar-balance"><%= user.balance.toFixed(2) %></span>
       </div>
-      <a href="/logout"><button>Logout</button></a>
+      <a href="/logout" class="logout"><button>Logout</button></a>
     <% } else { %>
       <div class="dropdown">
         <div class="dropdown-button">Login ▼</div>
@@ -59,7 +64,11 @@
 
     <div class="game-ui">
       <div id="balance-display">
-        Balance: $<span id="balance"><%= user ? user.balance.toFixed(2) : "1000.00" %></span>
+        <% if (user && user.id) { %>
+          Balance: <span id="balance"><%= user.balance.toFixed(2) %></span>
+        <% } else { %>
+          user42069: $<span id="balance">0.00</span>
+        <% } %>
       </div>
       <div id="bet-input">
         Bet amount: $<input type="number" id="bet-amount" value="100" min="1">
@@ -73,27 +82,55 @@
       <div id="message"></div>
     </div>
   </div>
+
 <script>
-  const balanceFromServer = <%= user.balance %>;
+  const balanceFromServer = <%= user ? user.balance : 0 %>;
+  window.userIsLoggedIn = <%= user && user.id ? 'true' : 'false' %>;
 </script>
+
   <script src="/src/garage.js"></script>
-  <script src="/src/crash.js"></script>
-  <script>
-    document.querySelectorAll('.dropdown-button').forEach(button => {
-      button.addEventListener('click', (e) => {
-        e.stopPropagation();
-        document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
-        button.parentElement.classList.toggle('open');
-      });
-    });
-
-    window.addEventListener('click', () => {
+<script>
+  document.querySelectorAll('.dropdown-button').forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
       document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+      button.parentElement.classList.toggle('open');
     });
+  });
 
-    document.querySelectorAll('.dropdown-content').forEach(content => {
-      content.addEventListener('click', e => e.stopPropagation());
+  window.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+  });
+
+  document.querySelectorAll('.dropdown-content').forEach(content => {
+    content.addEventListener('click', e => e.stopPropagation());
+  });
+
+  // 🚀 LOGIN FORM SUBMIT HANDLER
+  document.querySelectorAll('.dropdown-content form').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const body = JSON.stringify({
+        username: formData.get('username'),
+        password: formData.get('password')
+      });
+
+      const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body
+      });
+
+      const result = await res.json();
+      if (result.success) {
+        location.reload(); // ✅ Reload on success to update user UI
+      } else {
+        alert(result.message || 'Login failed');
+      }
     });
-  </script>
+  });
+</script>
+
 </body>
 </html>

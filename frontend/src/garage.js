@@ -270,9 +270,9 @@ function triggerAvalanche() {
       updateBalanceDisplay();
       setTimeout(triggerAvalanche, 800);
     } else {
-      if (spinTotalWin > 0) {
+      if (!document.querySelector('.win-display.total')) {
         const totalEl = document.createElement('div');
-        totalEl.className = 'win-display';
+        totalEl.className = 'win-display total';
         totalEl.textContent = `💰 Total Win: $${spinTotalWin.toFixed(2)}`;
         message.appendChild(totalEl);
       }
@@ -290,6 +290,18 @@ function triggerAvalanche() {
       } else {
         spinButton.disabled = false;
         isSpinning = false;
+        if (!freeSpinActive && spinTotalWin > 0) {
+          fetch('/garage/win', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ win: spinTotalWin })
+          })
+          .then(res => res.json())
+          .then(data => {
+            balance = data.balance;
+            updateBalanceDisplay();
+          });
+        }
       }
     }
 
@@ -329,8 +341,10 @@ function spin() {
         
         if (win) {
           const payout = currentBet * mult * (totalWinSymbols / 3);
+          balance += payout;
           spinTotalWin += payout;
           showWinAmount(payout);
+          updateBalanceDisplay();
           setTimeout(triggerAvalanche, 800);
         } else {
           message.textContent = '🙈 No win, try again!';
