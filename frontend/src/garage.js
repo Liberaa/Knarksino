@@ -1,4 +1,4 @@
-""// game.js — Megaway with Balance Integration and Explosions + Accurate Winnings
+// game.js — Megaway with Balance Integration and Explosions + Accurate Winnings
 
 // DOM Elements
 const reelsContainer = document.getElementById('reels');
@@ -21,9 +21,10 @@ let isSpinning = false;
 let avalancheCount = 0;
 let freeSpinActive = false;
 let freeSpinsLeft = 0;
-let balance = 1000;
+let balance = typeof balanceFromServer !== 'undefined' ? balanceFromServer : 0;
 let currentBet = 0;
 let totalWinSymbols = 0;
+let spinTotalWin = 0;
 
 // Symbols
 const WILD_SYMBOL = 'set9.png';
@@ -42,7 +43,10 @@ const weightedSymbols = [
 ];
 
 function updateBalanceDisplay() {
-  balanceDisplay.textContent = `$${balance.toFixed(2)}`;
+  const gameBalance = document.getElementById('balance');
+  const topbarBalance = document.getElementById('topbar-balance');
+  if (gameBalance) gameBalance.textContent = `$${balance.toFixed(2)}`;
+  if (topbarBalance) topbarBalance.textContent = `$${balance.toFixed(2)}`;
 }
 
 function randomSymbol() {
@@ -261,10 +265,17 @@ function triggerAvalanche() {
       message.textContent = `💥 Avalanche x${mult}`;
       const payout = currentBet * mult * (totalWinSymbols / 3);
       balance += payout;
+      spinTotalWin += payout;
       showWinAmount(payout);
       updateBalanceDisplay();
       setTimeout(triggerAvalanche, 800);
     } else {
+      if (spinTotalWin > 0) {
+        const totalEl = document.createElement('div');
+        totalEl.className = 'win-display';
+        totalEl.textContent = `💰 Total Win: $${spinTotalWin.toFixed(2)}`;
+        message.appendChild(totalEl);
+      }
       if (freeSpinActive) {
         freeSpinsLeft--;
         if (freeSpinsLeft > 0) {
@@ -277,57 +288,65 @@ function triggerAvalanche() {
           isSpinning = false;
         }
       } else {
-        message.textContent = '✅ Avalanche complete';
         spinButton.disabled = false;
         isSpinning = false;
       }
     }
+
   }, 900);
 }
 
 function spin() {
   const betAmount = parseFloat(betInput.value || '0');
-  if (isSpinning || betAmount <= 0 || balance < betAmount) {
-    alert("Invalid bet or insufficient balance.");
-    return;
-  }
+  if (isSpinning || betAmount <= 0) return;
+
   isSpinning = true;
-  avalancheCount = 0;
-  message.textContent = '';
   spinButton.disabled = true;
-  balance -= betAmount;
-  currentBet = betAmount;
-  updateBalanceDisplay();
-  createReels();
-  setTimeout(() => {
-    if (checkBonusTrigger() && !freeSpinActive) startFreeSpins();
-    const win = checkWin();
-    const mult = freeSpinActive ? freeMultiplier() : BASE_MULTIPLIERS[0];
-    multiplierDisplay.textContent = `Multiplier: x${mult}`;
-    if (win) {
-      avalancheCount++;
-      message.textContent = '🎉 Win! Starting Avalanche…';
-      setTimeout(triggerAvalanche, 800);
-    } else {
-      if (freeSpinActive) {
-        freeSpinsLeft--;
-        if (freeSpinsLeft > 0) {
-          message.textContent = `🎰 Free Spins Left: ${freeSpinsLeft}`;
-          setTimeout(spin, 1200);
-        } else {
-          message.textContent = '🏁 Free Spins Over!';
-          freeSpinActive = false;
-          spinButton.disabled = false;
-          isSpinning = false;
-        }
-      } else {
-        message.textContent = '🙈 No win. Try again!';
-        spinButton.disabled = false;
-        isSpinning = false;
+
+  fetch('/garage/spin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ bet: betAmount })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        alert(data.error);
+        return;
       }
-    }
-  }, 1650);
+
+      balance = data.balance;
+      updateBalanceDisplay();
+      currentBet = parseFloat(betInput.value || '0');
+      avalancheCount = 0;
+      spinTotalWin = 0;
+      createReels();
+
+      setTimeout(() => {
+        const win = checkWin();
+        const mult = data.multiplier || 1;
+        multiplierDisplay.textContent = `Multiplier: x${mult}`;
+        
+        if (win) {
+          const payout = currentBet * mult * (totalWinSymbols / 3);
+          spinTotalWin += payout;
+          showWinAmount(payout);
+          setTimeout(triggerAvalanche, 800);
+        } else {
+          message.textContent = '🙈 No win, try again!';
+        }
+      }, 1000);
+    })
+    .catch(err => {
+      alert('Spin failed');
+      console.error(err);
+    })
+    .finally(() => {
+      isSpinning = false;
+      spinButton.disabled = false;
+    });
 }
+
 
 spinButton.addEventListener('click', spin);
 updateBalanceDisplay();

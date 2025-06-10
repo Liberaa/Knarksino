@@ -40,6 +40,9 @@ app.use('/', authRoutes);
 const crashRoutes = require('./routes/crashRoutes');
 app.use('/', crashRoutes);
 
+const garageRoutes = require('./routes/garageRoutes');
+app.use('/', garageRoutes);
+
 // Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

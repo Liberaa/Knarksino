@@ -5,15 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gonzo's Quest Megaways</title>
   <link rel="stylesheet" href="/css/garage.css" />
+  <style>
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #111;
+      color: #fff;
+      padding: 10px 20px;
+      z-index: 999;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .topbar form input {
+      margin-right: 5px;
+    }
+
+    body {
+      padding-top: 60px;
+    }
+  </style>
 </head>
 <body>
+  <div class="topbar">
+    <% if (user) { %>
+      <div>
+        <strong><%= user.username %></strong> |
+        Balance: $<span id="topbar-balance"><%= user.balance.toFixed(2) %></span>
+      </div>
+      <a href="/logout"><button>Logout</button></a>
+    <% } else { %>
+      <div class="dropdown">
+        <div class="dropdown-button">Login ▼</div>
+        <div class="dropdown-content">
+          <form action="/login" method="POST">
+            <input name="username" placeholder="Username" required>
+            <input name="password" type="password" required placeholder="Password">
+            <button type="submit">Login</button>
+          </form>
+        </div>
+      </div>
+    <% } %>
+  </div>
+
   <div class="game-container">
     <div class="header">
       <h1>Knarksino Megaway</h1>
       <div id="multiplier">Multiplier: x1</div>
     </div>
 
-    <!-- 💰 Balance + Bet Input -->
     <div class="game-ui">
       <div id="balance-display">
         Balance: $<span id="balance"><%= user ? user.balance.toFixed(2) : "1000.00" %></span>
@@ -23,18 +66,34 @@
       </div>
     </div>
 
-    <!-- 🎰 Game Reels -->
     <div class="reels" id="reels"></div>
 
-    <!-- 🎮 Controls -->
     <div class="controls">
       <button id="spinButton">🎯 Spin</button>
       <div id="message"></div>
     </div>
   </div>
-
-  <!-- 📜 Game Logic -->
+<script>
+  const balanceFromServer = <%= user.balance %>;
+</script>
   <script src="/src/garage.js"></script>
-</body>
+  <script src="/src/crash.js"></script>
+  <script>
+    document.querySelectorAll('.dropdown-button').forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+        button.parentElement.classList.toggle('open');
+      });
+    });
 
+    window.addEventListener('click', () => {
+      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+    });
+
+    document.querySelectorAll('.dropdown-content').forEach(content => {
+      content.addEventListener('click', e => e.stopPropagation());
+    });
+  </script>
+</body>
 </html>
