@@ -9,8 +9,18 @@
 <body>
   <div class="game-container">
     <div class="header">
-      <h1>🗿 Gonzo's Quest: Megaways</h1>
+      <h1>Knarksino Megaway</h1>
       <div id="multiplier">Multiplier: x1</div>
+    </div>
+
+    <!-- Balance + Bet Input -->
+    <div class="game-ui">
+      <div id="balance-display">
+        Balance: $<span id="balance"><%= user ? user.balance.toFixed(2) : "0.00" %></span>
+      </div>
+      <div id="bet-input">
+        Bet amount: $<input type="number" id="bet-amount" value="100" min="1">
+      </div>
     </div>
 
     <div class="reels" id="reels"></div>
@@ -20,6 +30,7 @@
       <div id="message"></div>
     </div>
   </div>
+
   <script src="/src/garage.js"></script>
 </body>
 </html>
