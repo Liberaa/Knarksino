@@ -24,6 +24,11 @@
       margin-right: 5px;
     }
 
+    .logout {
+      margin-right: 30px;
+    }
+
+
     body {
       padding-top: 60px;
     }
@@ -36,7 +41,7 @@
         <strong><%= user.username %></strong> |
         Balance: <span id="topbar-balance"><%= user.balance.toFixed(2) %></span>
       </div>
-      <a href="/logout"><button>Logout</button></a>
+      <a href="/logout" class="logout"><button>Logout</button></a>
     <% } else { %>
       <div class="dropdown">
         <div class="dropdown-button">Login ▼</div>
