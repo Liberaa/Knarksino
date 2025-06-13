@@ -39,30 +39,21 @@ router.get('/inside/crash', (req, res) => {
 }); 
 
 router.get('/garage', (req, res) => {
+  const guestUser = {
+    id: null,
+    username: 'user42069',
+    balance: 0
+  };
+
   if (!req.session.user) {
-    // Guest user
-    return res.render('garage', {
-      user: {
-        id: null,
-        username: 'user42069',
-        balance: 0
-      }
-    });
+    return res.render('garage', { user: guestUser });
   }
 
   db.get('SELECT username, balance FROM users WHERE id = ?', [req.session.user.id], (err, row) => {
     if (err || !row) {
-      // Fallback to guest if error or user not found
-      return res.render('garage', {
-        user: {
-          id: null,
-          username: 'user42069',
-          balance: 0
-        }
-      });
+      return res.render('garage', { user: guestUser });
     }
 
-    // Logged-in user
     req.session.user.balance = row.balance;
     res.render('garage', {
       user: {
@@ -73,6 +64,7 @@ router.get('/garage', (req, res) => {
     });
   });
 });
+
 
 
 
