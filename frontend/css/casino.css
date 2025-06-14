@@ -9,13 +9,36 @@ html, body{
 	user-select: none;
 }
 
+body {
+	position: relative;
+	z-index: 0;
+  background-color: rgb(145, 135, 120);
+}
+
+body::before {
+	content: "";
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: url('../img/table.png') no-repeat center center fixed;
+	background-size: auto 100vh;
+	filter: brightness(1.3);
+	z-index: -1;
+}
+
+
 #container{
 	display: flex;
 	justify-content: center;
-	background-color: #016D29;
+	background-color: #016d29a6;
 	height: 470px;
 	padding: 20px;
 	color: #fff;
+  width: 1000px;
+  margin-left: 40%;
+  margin-top: 8%;
 }
 
 /*notification*/
@@ -23,9 +46,9 @@ html, body{
 	position: absolute;
 	width: 500px;
 	height: 318px;
-	background-color: #ad0205;
+	background-color: #ad0205c9;
 	z-index: 10;
-	border: 8px solid #d3b201;
+	border: 8px solid #d3b301c0;
 	border-radius: 12px;
 	transition: 1s;
 }
@@ -47,7 +70,7 @@ html, body{
 	padding: 10px;
 	font-size: 32px;
 	text-align: center;
-	background-color: green;
+	background-color: rgba(0, 128, 0, 0.73);
 	border-radius: 15px;
 	box-shadow: 3px 4px rgb(0 0 0 / 25%);
 	cursor: pointer;
@@ -276,11 +299,11 @@ html, body{
 }
 
 .redNum{
-	background-color: #E0080B;
+	background-color: #e0080cba;
 }
 
 .blackNum{
-	background-color: #000;
+	background-color: #000000b3;
 }
 
 .chipDeck, .bankContainer{
@@ -302,7 +325,7 @@ html, body{
 .cdChip{
 	width: 27px;
     height: 27px;
-    background-color: #fff;
+    background-color: #ffffffb9;
     border: 5px solid;
     border-radius: 100%;
     display: inline-block;
@@ -328,9 +351,9 @@ html, body{
 }
 
 .clearBet{
-	border-color:red;
-	background-color:red;
-	color:#fff;
+	border-color:rgba(255, 0, 0, 0.639);
+	background-color:rgba(255, 0, 0, 0.741);
+	color:#ffffffad;
 	margin-left:22px;
 }
 
@@ -345,7 +368,7 @@ html, body{
     font-size: 18px;
     margin-left: 7px;
     padding: 5px;
-    border: 4px solid silver;
+    border: 4px solid rgba(192, 192, 192, 0.7);
     border-radius: 7px;
     text-align: right;
 }
@@ -360,16 +383,30 @@ html, body{
 }
 
 #pnContent{
-	border: 4px solid #d5b714;
+	border: 4px solid #d5b814bd;
 	width: 485px;
 	height: 31px;
 	position: relative;
 	display: block;
 	margin-left: 4px;
 	margin-top: 3px;
-	background-color: #fff;
-	color: #000;
+	background-color: #ffffffae;
+	color: #000000b6;
 	overflow:hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 0 12px;
+}
+
+.header h1 {
+  font-size: 2.2rem;
+  color: #ffe98a;
+  text-shadow: 1px 1px 2px #000;
 }
 
 .pnRed, .pnBlack, .pnGreen{
@@ -379,11 +416,11 @@ html, body{
 	font-size: 19px;
 	top: 5px;
 }.pnRed{
-	color: red;
+	color: rgba(255, 0, 0, 0.672);
 }.pnBlack{
-	color: black;
+	color: rgba(0, 0, 0, 0.596);
 }.pnGreen{
-	color: green;
+	color: rgba(0, 128, 0, 0.651);
 }
 /*betting table end*/
 

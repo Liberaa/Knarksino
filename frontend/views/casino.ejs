@@ -10,7 +10,61 @@
 	<meta property="og:description" content="A fully functioning roulette game made using Javascript and CSS">
 	<link href="/css/casino.css" rel="stylesheet" type="text/css">
 </head>
+  <style>
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #111;
+      color: #fff;
+      padding: 10px 20px;
+      z-index: 999;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .topbar form input {
+      margin-right: 5px;
+    }
+
+    .logout {
+      margin-right: 30px;
+    }
+
+
+    body {
+      padding-top: 60px;
+    }
+  </style>
 
 <body>
+  <script>
+  const balanceFromServer = <%= user ? user.balance : 0 %>;
+  window.userIsLoggedIn = <%= user && user.id ? 'true' : 'false' %>;
+</script>
 	<script src="/src/casino.js"></script>
+  <script src="/src/all.js"></script>
+
+  <div class="topbar">
+    <% if (user && user.id) { %>
+      <div>
+        <strong><%= user.username %></strong> |
+        Balance: <span id="topbar-balance"><%= user.balance.toFixed(2) %></span>
+      </div>
+      <a href="/logout" class="logout"><button>Logout</button></a>
+    <% } else { %>
+      <div class="dropdown">
+        <div class="dropdown-button">Login ▼</div>
+        <div class="dropdown-content">
+          <form id="login-form" onsubmit="return false;">
+            <input name="username" placeholder="Username" required>
+            <input name="password" type="password" required placeholder="Password">
+            <button type="submit">Login</button>
+          </form>
+        </div>
+      </div>
+    <% } %>
+  </div>
 </body>
