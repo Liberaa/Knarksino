@@ -20,8 +20,6 @@ body{
 /* Enhanced overlay for better game visibility */
 body::before {
   content: '';
-=======
-#rain-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -42,16 +40,6 @@ body::before {
   margin-right: 90px;
   height: 1120px; /* Increased height */
   font-size: 1.2em;
-=======
-  height: 100%;
-  pointer-events: none;
-  z-index: 20;
-}
-
-.game-container {
-  background: none;
-  padding: 0;
-  width: auto;
   text-align: center;
   border: 2px solid rgba(255, 217, 0, 0);
 }
