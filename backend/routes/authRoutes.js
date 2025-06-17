@@ -19,19 +19,22 @@ router.post('/register', async (req, res) => {
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
   db.get(`SELECT * FROM users WHERE username = ?`, [username], async (err, user) => {
-    if (!user) return res.status(400).send('No such user');
+    if (!user) return res.json({ success: false, message: 'No such user' });
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(400).send('Wrong password');
+    if (!match) return res.json({ success: false, message: 'Wrong password' });
 
     req.session.user = {
       id: user.id,
       username: user.username,
       balance: user.balance
     };
-    res.redirect('/');
+    req.session.save(() => {
+      res.json({ success: true });
+    });
   });
 });
+
 
 router.get('/logout', (req, res) => {
   req.session.destroy(() => res.redirect('/'));

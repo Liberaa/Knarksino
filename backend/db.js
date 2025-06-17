@@ -8,7 +8,7 @@ db.run(`
     username TEXT UNIQUE,
     email TEXT UNIQUE,
     password TEXT,
-    balance INTEGER DEFAULT 0,
+    balance INTEGER DEFAULT 10000,
     heroin INTEGER DEFAULT 0,
     lsd INTEGER DEFAULT 0,
     weed INTEGER DEFAULT 0,

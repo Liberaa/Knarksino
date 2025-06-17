@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="/css/crash.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css">
+  <title>Crash Game</title>
+</head>
+<style>
+#casino-ui {
+    margin: 20px;
+    font-family: sans-serif;
+}
+#balance-display {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+#bet-input input {
+    width: 80px;
+}
+</style>
+<body>
+
+<div class="buttons">
+  <% if (user) { %>
+    <span><%= user.username %></span>
+    <a href="/logout"><button>Logout</button></a>
+  <% } else { %>
+    <div class="dropdown">
+      <div class="dropdown-button">Login ▼</div>
+      <div class="dropdown-content">
+        <form id="login-form" onsubmit="return false;">
+          <input name="username" placeholder="Username" required>
+          <input name="password" type="password" required placeholder="Password">
+          <button type="submit">Login</button>
+        </form>
+      </div>
+    </div>
+  <% } %>
+
+
+  <!-- Rocket Above Game -->
+  <div class="rocket-track">
+    <canvas id="trailCanvas"></canvas>
+    <img id="rocket" src="../img/rocket.png" alt="Rocket" />
+  </div>
+
+<div class="game-ui-overlay">
+  <div id="result"></div>
+  <div id="multiplier">1.00x</div>
+
+  <div id="bet-input">
+      Bet amount: $<input type="number" id="bet-amount" value="100" min="1">
+  </div>
+
+  <button id="startBtn">Start</button>
+  <button id="cashOutBtn" disabled>Cash Out</button>
+</div>
+    <div class="inside-info">
+      <h2>
+        <% if (user) { %>
+          Balance: $<span id="balance"><%= user.balance %></span>
+        <% } else { %>
+          user42069: $0
+        <% } %>
+      </h2>
+    </div>
+<script src="/src/crash.js"></script>
+<script src="/src/all.js"></script>
+  <script>
+    document.querySelectorAll('.dropdown-button').forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+        button.parentElement.classList.toggle('open');
+      });
+    });
+
+    window.addEventListener('click', () => {
+      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+    });
+
+    document.querySelectorAll('.dropdown-content').forEach(content => {
+      content.addEventListener('click', e => e.stopPropagation());
+    });
+  </script>
+</body>
+</html>

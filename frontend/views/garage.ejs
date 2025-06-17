@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Megaways Slot Machine</title>
+
+
+  <!-- main CSS (now contains the new .cabinet rules) -->
+  <link rel="stylesheet" href="/css/garage.css" />
+</head>
+
+
+<body>
+
+
+  <!-- ART-DECO CABINET BACKGROUND -->
+  <div class="cabinet">
+
+
+    <!-- THE GAME BOARD -->
+    <div class="slot-machine">
+      <!-- HEADER ---------------------------------------------------->
+      <div class="header">
+        <h1 class="title">MEGAWAYS</h1>
+        <div class="ways-to-win" id="waysToWin">Ways to Win: 0</div>
+      </div>
+
+
+      <!-- FREE-SPIN BANNER ------------------------------------------>
+      <div id="fsBanner" class="banner hidden"></div>
+
+
+      <!-- REEL AREA ------------------------------------------------->
+      <div class="game-area">
+        <div class="reels-container" id="reelsContainer">
+          <!-- reels injected by JS -->
+=======
+  <style>
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #111;
+      color: #fff;
+      padding: 10px 20px;
+      z-index: 999;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .topbar form input {
+      margin-right: 5px;
+    }
+
+    .logout {
+      margin-right: 30px;
+    }
+
+
+    body {
+      padding-top: 60px;
+    }
+  </style>
+</head>
+<video id="rain-overlay" autoplay muted loop playsinline>
+  <source src="../img/rain.webm" type="video/webm">
+</video>
+<body>
+  <div class="topbar">
+    <% if (user && user.id) { %>
+      <div>
+        <strong><%= user.username %></strong> |
+        Balance: <span id="topbar-balance"><%= user.balance.toFixed(2) %></span>
+      </div>
+      <a href="/logout" class="logout"><button>Logout</button></a>
+    <% } else { %>
+      <div class="dropdown">
+        <div class="dropdown-button">Login ▼</div>
+        <div class="dropdown-content">
+          <form id="login-form" onsubmit="return false;">
+            <input name="username" placeholder="Username" required>
+            <input name="password" type="password" required placeholder="Password">
+            <button type="submit">Login</button>
+          </form>
+        </div>
+
+
+        <!-- SVG glow frame (sits on top of reels) -->
+     
+      </div>
+
+
+ <!-- MAIN + EXTRA PLAY CONTROLS TOGETHER -------------------------->
+<div class="controls-row">
+  <button id="turboBtn" class="hud-btn">Turbo: Off</button>
+
+  <div class="balance">💰 BALANCE: $<span id="balanceAmount">0.00</span></div>
+
+  <button class="spin-btn" id="spinBtn">SPIN</button>
+
+  <div class="bet">🎰 BET: $<span id="betAmount">1.00</span></div>
+
+  <button id="maxBet" class="btn btn-yellow">MAX</button>
+  <button id="betDown" class="btn btn-red">BET -</button>
+  <button id="betUp" class="btn btn-green">BET +</button>
+
+  <button id="autoBtn" class="hud-btn">Auto 10</button>
+</div>
+
+      <!-- INFO PANEL ----------------------------------------------->
+      <div class="info-panel">
+        <div class="info-box">
+          <div class="info-label">Total Spins</div>
+          <div class="info-value" id="totalSpins">0</div>
+        </div>
+
+
+        <div class="info-box">
+          <div class="info-label">Free Spins</div>
+          <div class="info-value" id="freeSpins">0</div>
+        </div>
+
+
+        <div class="info-box">
+          <div class="info-label">Total Win</div>
+          <div class="info-value" id="lastWinAmount">$0.00</div>
+        </div>
+
+
+
+        <div class="info-box">
+          <div class="info-label">Max Ways</div>
+          <div class="info-value">117,649</div>
+        </div>
+      </div>
+
+
+    </div><!-- /.slot-machine -->
+  </div><!-- /.cabinet -->
+
+
+  
+
+  <!-- Game logic -->
+  <script type="module" src="/src/garage.js"></script>
+=======
+    <% } %>
+  </div>
+
+  <div class="game-container">
+    <div class="header">
+      <h1>Knarksino Megaway</h1>
+      <div id="multiplier">Multiplier: x1</div>
+    </div>
+
+    <div class="game-ui">
+      <div id="balance-display">
+        <% if (user && user.id) { %>
+          Balance: <span id="balance"><%= user.balance.toFixed(2) %></span>
+        <% } else { %>
+          user42069: $<span id="balance">0.00</span>
+        <% } %>
+      </div>
+      <div id="bet-input">
+        Bet amount: $<input type="number" id="bet-amount" value="100" min="1">
+      </div>
+    </div>
+
+    <div class="reels" id="reels"></div>
+
+    <div class="controls">
+      <button id="spinButton">🎯 Spin</button>
+      <div id="message"></div>
+    </div>
+  </div>
+
+<script>
+  const balanceFromServer = <%= user ? user.balance : 0 %>;
+  window.userIsLoggedIn = <%= user && user.id ? 'true' : 'false' %>;
+</script>
+
+  <script src="/src/garage.js"></script>
+<script>
+  document.querySelectorAll('.dropdown-button').forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+      button.parentElement.classList.toggle('open');
+    });
+  });
+
+  window.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+  });
+
+  document.querySelectorAll('.dropdown-content').forEach(content => {
+    content.addEventListener('click', e => e.stopPropagation());
+  });
+
+  // 🚀 LOGIN FORM SUBMIT HANDLER
+  document.querySelectorAll('.dropdown-content form').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const body = JSON.stringify({
+        username: formData.get('username'),
+        password: formData.get('password')
+      });
+
+      const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body
+      });
+
+  window.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+  });
+
+  document.querySelectorAll('.dropdown-content').forEach(content => {
+    content.addEventListener('click', e => e.stopPropagation());
+  });
+
+  // 🚀 LOGIN FORM SUBMIT HANDLER
+  document.querySelectorAll('.dropdown-content form').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const body = JSON.stringify({
+        username: formData.get('username'),
+        password: formData.get('password')
+      });
+
+      const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body
+      });
+
+      const result = await res.json();
+      if (result.success) {
+        location.reload(); // ✅ Reload on success to update user UI
+      } else {
+        alert(result.message || 'Login failed');
+      }
+    });
+  });
+
+</body>
+</html>
+
+
+

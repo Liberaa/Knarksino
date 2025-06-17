@@ -1,10 +1,24 @@
-let bankValue = 1000;
+const balanceDisplay = document.getElementById('balance');
+
+let bankValue = 0;
+let balance = 0;
+
+fetch('/api/user/balance')
+  .then(res => res.json())
+  .then(data => {
+    balance = data.balance;
+    bankValue = data.balance;
+    updateBalanceDisplay();
+    document.getElementById('bankSpan').innerText = '' + bankValue.toLocaleString("en-GB");
+  });
+
 let currentBet = 0;
 let wager = 5;
 let lastWager = 0;
 let bet = [];
 let numbersBet = [];
 let previousNumbers = [];
+let isSpinning = false; 
 
 let numRed = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
 let wheelnumbersAC = [0, 26, 3, 35, 12, 28, 7, 29, 18, 22, 9, 31, 14, 20, 1, 33, 16, 24, 5, 10, 23, 8, 30, 11, 36, 13, 27, 6, 34, 17, 25, 2, 21, 4, 19, 15, 32];
@@ -18,8 +32,17 @@ startGame();
 let wheel = document.getElementsByClassName('wheel')[0];
 let ballTrack = document.getElementsByClassName('ballTrack')[0];
 
+
+function updateBalanceDisplay() {
+  const gameBalance = document.getElementById('balance');
+  const topbarBalance = document.getElementById('topbar-balance');
+  if (gameBalance) gameBalance.textContent = `$${balance.toFixed(2)}`;
+  if (topbarBalance) topbarBalance.textContent = `$${balance.toFixed(2)}`;
+}
+
 function resetGame(){
-	bankValue = 1000;
+	bankValue = balance;
+
 	currentBet = 0;
 	wager = 5;
 	bet = [];
@@ -439,20 +462,39 @@ function clearBet(){
 	numbersBet = [];
 }
 
+function lockUI() {
+	const board = document.getElementById('betting_board');
+	if (board) board.style.pointerEvents = 'none';
+}
+
+function unlockUI() {
+	const board = document.getElementById('betting_board');
+	if (board) board.style.pointerEvents = '';
+}
+
 function setBet(e, n, t, o){
+	if (isSpinning) return; // 🔒 Prevent placing bets while spinning
 	lastWager = wager;
 	wager = (bankValue < wager)? bankValue : wager;
 	if(wager > 0){
-		if(!container.querySelector('.spinBtn')){
-			let spinBtn = document.createElement('div');
+		if (isSpinning) return; // 🔒 Prevent new bets AND spin button while spinning
+
+		if (!isSpinning && !container.querySelector('.spinBtn')) {
+			const spinBtn = document.createElement('div');
 			spinBtn.setAttribute('class', 'spinBtn');
 			spinBtn.innerText = 'spin';
-			spinBtn.onclick = function(){
-				this.remove();
+
+			spinBtn.onclick = function () {
+				if (isSpinning) return; // ⛔ Redundant but safe
+				isSpinning = true;
+				spinBtn.remove(); // Important to remove *before* async delay
 				spin();
 			};
+
 			container.append(spinBtn);
 		}
+
+
 		bankValue = bankValue - wager;
 		currentBet = currentBet + wager;
 		document.getElementById('bankSpan').innerText = '' + bankValue.toLocaleString("en-GB") + '';
@@ -496,31 +538,35 @@ function setBet(e, n, t, o){
 	}
 }
 
-function spin(){
-	var winningSpin = Math.floor(Math.random() * 37);
+function spin() {
+	isSpinning = true;      // 🔒 Lock spin logic immediately
+	lockUI();               // 🧱 Disable user interaction
+
+	const winningSpin = Math.floor(Math.random() * 37);
 	spinWheel(winningSpin);
-	setTimeout(function(){
-		if(numbersBet.includes(winningSpin)){
+
+	setTimeout(function () {
+		if (numbersBet.includes(winningSpin)) {
 			let winValue = 0;
 			let betTotal = 0;
-			for(i = 0; i < bet.length; i++){
-				var numArray = bet[i].numbers.split(',').map(Number);
-				if(numArray.includes(winningSpin)){
-					bankValue = (bankValue + (bet[i].odds * bet[i].amt) + bet[i].amt);
-					winValue = winValue + (bet[i].odds * bet[i].amt);
-					betTotal = betTotal + bet[i].amt;
+			for (let i = 0; i < bet.length; i++) {
+				const numArray = bet[i].numbers.split(',').map(Number);
+				if (numArray.includes(winningSpin)) {
+					bankValue += (bet[i].odds * bet[i].amt) + bet[i].amt;
+					winValue += (bet[i].odds * bet[i].amt);
+					betTotal += bet[i].amt;
 				}
 			}
 			win(winningSpin, winValue, betTotal);
 		}
 
 		currentBet = 0;
-		document.getElementById('bankSpan').innerText = '' + bankValue.toLocaleString("en-GB") + '';
-		document.getElementById('betSpan').innerText = '' + currentBet.toLocaleString("en-GB") + '';
-		
-		let pnClass = (numRed.includes(winningSpin))? 'pnRed' : ((winningSpin == 0)? 'pnGreen' : 'pnBlack');
-		let pnContent = document.getElementById('pnContent');
-		let pnSpan = document.createElement('span');
+		document.getElementById('bankSpan').innerText = bankValue.toLocaleString("en-GB");
+		document.getElementById('betSpan').innerText = currentBet.toLocaleString("en-GB");
+
+		const pnClass = numRed.includes(winningSpin) ? 'pnRed' : (winningSpin === 0 ? 'pnGreen' : 'pnBlack');
+		const pnContent = document.getElementById('pnContent');
+		const pnSpan = document.createElement('span');
 		pnSpan.setAttribute('class', pnClass);
 		pnSpan.innerText = winningSpin;
 		pnContent.append(pnSpan);
@@ -530,11 +576,58 @@ function spin(){
 		numbersBet = [];
 		removeChips();
 		wager = lastWager;
-		if(bankValue == 0 && currentBet == 0){
+
+		if (bankValue === 0 && currentBet === 0) {
 			gameOver();
 		}
+
+		isSpinning = false;  // ✅ Unlock spin logic
+		unlockUI();          // 🎯 Re-enable interaction
 	}, 10000);
+=======
+  fetch('/api/roulette/spin', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ bets: bet })
+  })
+  .then(res => res.json())
+  .then(data => {
+    spinWheel(data.winningNumber);
+    setTimeout(() => {
+      updateAfterSpin(data.winningNumber, data.payout, data.totalBet, data.newBalance);
+    }, 10000);
+  });
 }
+
+function updateAfterSpin(winningSpin, winValue, betTotal, newBalance) {
+  balance = newBalance;
+  bankValue = newBalance;
+  updateBalanceDisplay();
+
+  if (winValue > 0) {
+    win(winningSpin, winValue - betTotal, betTotal);
+  }
+
+  currentBet = 0;
+  document.getElementById('bankSpan').innerText = newBalance.toLocaleString("en-GB");
+  document.getElementById('betSpan').innerText = '0';
+
+  let pnClass = numRed.includes(winningSpin) ? 'pnRed' : (winningSpin == 0 ? 'pnGreen' : 'pnBlack');
+  let pnContent = document.getElementById('pnContent');
+  let pnSpan = document.createElement('span');
+  pnSpan.setAttribute('class', pnClass);
+  pnSpan.innerText = winningSpin;
+  pnContent.append(pnSpan);
+  pnContent.scrollLeft = pnContent.scrollWidth;
+
+  bet = [];
+  numbersBet = [];
+  removeChips();
+  wager = lastWager;
+  if (newBalance === 0) gameOver();
+}
+
+
 
 function win(winningSpin, winValue, betTotal){
 	if(winValue > 0){
@@ -579,6 +672,7 @@ function win(winningSpin, winValue, betTotal){
 }
 
 function removeBet(e, n, t, o){
+	if (isSpinning) return; // 🔒 Prevent removing bets while spinning
 	wager = (wager == 0)? 100 : wager;
 	for(i = 0; i < bet.length; i++){
 		if(bet[i].numbers == n && bet[i].type == t){
@@ -643,3 +737,7 @@ function removeChips(){
 		removeChips();
 	}
 }
+
+window.addEventListener('DOMContentLoaded', () => {
+  updateBalanceDisplay();
+});
