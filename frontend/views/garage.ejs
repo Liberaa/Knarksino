@@ -34,6 +34,9 @@
     }
   </style>
 </head>
+<video id="rain-overlay" autoplay muted loop playsinline>
+  <source src="../img/rain.webm" type="video/webm">
+</video>
 <body>
   <div class="topbar">
     <% if (user && user.id) { %>
@@ -46,7 +49,7 @@
       <div class="dropdown">
         <div class="dropdown-button">Login ▼</div>
         <div class="dropdown-content">
-          <form action="/login" method="POST">
+          <form id="login-form" onsubmit="return false;">
             <input name="username" placeholder="Username" required>
             <input name="password" type="password" required placeholder="Password">
             <button type="submit">Login</button>
@@ -122,6 +125,30 @@
         body
       });
 
+  window.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+  });
+
+  document.querySelectorAll('.dropdown-content').forEach(content => {
+    content.addEventListener('click', e => e.stopPropagation());
+  });
+
+  // 🚀 LOGIN FORM SUBMIT HANDLER
+  document.querySelectorAll('.dropdown-content form').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const body = JSON.stringify({
+        username: formData.get('username'),
+        password: formData.get('password')
+      });
+
+      const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body
+      });
+
       const result = await res.json();
       if (result.success) {
         location.reload(); // ✅ Reload on success to update user UI
@@ -130,7 +157,6 @@
       }
     });
   });
-</script>
 
 </body>
 </html>
