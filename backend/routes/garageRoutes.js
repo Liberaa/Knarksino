@@ -30,4 +30,26 @@ router.post('/garage/spin', async (req, res) => {
   });
 });
 
+
+router.post('/garage/win', (req, res) => {
+  const user = req.session.user;
+  const winnings = parseFloat(req.body.win);
+
+  if (!user || !winnings || winnings <= 0)
+    return res.status(400).json({ error: 'Invalid' });
+
+  db.get(`SELECT balance FROM users WHERE id = ?`, [user.id], (err, row) => {
+    if (err || !row) return res.status(500).send('DB error');
+    const newBalance = row.balance + winnings;
+
+    db.run(`UPDATE users SET balance = ? WHERE id = ?`, [newBalance, user.id], err => {
+      if (err) return res.status(500).send('Update error');
+      req.session.user.balance = newBalance;
+      req.session.save();
+      res.json({ balance: newBalance });
+    });
+  });
+});
+
+
 module.exports = router;

@@ -539,6 +539,56 @@ function cascade () {
         document.querySelectorAll('.symbol.marked').length >= 15){
       document.querySelector('.slot-machine').classList.add('big-win');
       setTimeout(()=> document.querySelector('.slot-machine').classList.remove('big-win'),500);
+=======
+function triggerAvalanche() {
+  performAvalanche();
+  setTimeout(() => {
+    const again = checkWin();
+    const mult = freeSpinActive ? freeMultiplier() : BASE_MULTIPLIERS[Math.min(avalancheCount, BASE_MULTIPLIERS.length - 1)];
+    multiplierDisplay.textContent = `Multiplier: x${mult}`;
+    if (again) {
+      avalancheCount++;
+      message.textContent = `💥 Avalanche x${mult}`;
+      const payout = currentBet * mult * (totalWinSymbols / 3);
+      balance += payout;
+      spinTotalWin += payout;
+      showWinAmount(payout);
+      updateBalanceDisplay();
+      setTimeout(triggerAvalanche, 800);
+    } else {
+      if (!document.querySelector('.win-display.total')) {
+        const totalEl = document.createElement('div');
+        totalEl.className = 'win-display total';
+        totalEl.textContent = `💰 Total Win: $${spinTotalWin.toFixed(2)}`;
+        message.appendChild(totalEl);
+      }
+      if (freeSpinActive) {
+        freeSpinsLeft--;
+        if (freeSpinsLeft > 0) {
+          message.textContent = `🎰 Free Spins Left: ${freeSpinsLeft}`;
+          setTimeout(spin, 1200);
+        } else {
+          message.textContent = '🏁 Free Spins Over!';
+          freeSpinActive = false;
+          spinButton.disabled = false;
+          isSpinning = false;
+        }
+      } else {
+        spinButton.disabled = false;
+        isSpinning = false;
+        if (!freeSpinActive && spinTotalWin > 0) {
+          fetch('/garage/win', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ win: spinTotalWin })
+          })
+          .then(res => res.json())
+          .then(data => {
+            balance = data.balance;
+            updateBalanceDisplay();
+          });
+        }
+      }
     }
 
     if (freeSpins)         spin();
@@ -643,6 +693,31 @@ function wiggle(el, duration = 0.3, distance = 3){
       ease: "sine.inOut",
       yoyo: true,
       repeat: 3
+=======
+      setTimeout(() => {
+        const win = checkWin();
+        const mult = data.multiplier || 1;
+        multiplierDisplay.textContent = `Multiplier: x${mult}`;
+        
+        if (win) {
+          const payout = currentBet * mult * (totalWinSymbols / 3);
+          balance += payout;
+          spinTotalWin += payout;
+          showWinAmount(payout);
+          updateBalanceDisplay();
+          setTimeout(triggerAvalanche, 800);
+        } else {
+          message.textContent = '🙈 No win, try again!';
+        }
+      }, 1000);
+    })
+    .catch(err => {
+      alert('Spin failed');
+      console.error(err);
+    })
+    .finally(() => {
+      isSpinning = false;
+      spinButton.disabled = false;
     });
   }
 }

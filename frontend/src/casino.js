@@ -1,4 +1,17 @@
-let bankValue = 1000;
+const balanceDisplay = document.getElementById('balance');
+
+let bankValue = 0;
+let balance = 0;
+
+fetch('/api/user/balance')
+  .then(res => res.json())
+  .then(data => {
+    balance = data.balance;
+    bankValue = data.balance;
+    updateBalanceDisplay();
+    document.getElementById('bankSpan').innerText = '' + bankValue.toLocaleString("en-GB");
+  });
+
 let currentBet = 0;
 let wager = 5;
 let lastWager = 0;
@@ -19,8 +32,17 @@ startGame();
 let wheel = document.getElementsByClassName('wheel')[0];
 let ballTrack = document.getElementsByClassName('ballTrack')[0];
 
+
+function updateBalanceDisplay() {
+  const gameBalance = document.getElementById('balance');
+  const topbarBalance = document.getElementById('topbar-balance');
+  if (gameBalance) gameBalance.textContent = `$${balance.toFixed(2)}`;
+  if (topbarBalance) topbarBalance.textContent = `$${balance.toFixed(2)}`;
+}
+
 function resetGame(){
-	bankValue = 1000;
+	bankValue = balance;
+
 	currentBet = 0;
 	wager = 5;
 	bet = [];
@@ -562,7 +584,50 @@ function spin() {
 		isSpinning = false;  // ✅ Unlock spin logic
 		unlockUI();          // 🎯 Re-enable interaction
 	}, 10000);
+=======
+  fetch('/api/roulette/spin', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ bets: bet })
+  })
+  .then(res => res.json())
+  .then(data => {
+    spinWheel(data.winningNumber);
+    setTimeout(() => {
+      updateAfterSpin(data.winningNumber, data.payout, data.totalBet, data.newBalance);
+    }, 10000);
+  });
 }
+
+function updateAfterSpin(winningSpin, winValue, betTotal, newBalance) {
+  balance = newBalance;
+  bankValue = newBalance;
+  updateBalanceDisplay();
+
+  if (winValue > 0) {
+    win(winningSpin, winValue - betTotal, betTotal);
+  }
+
+  currentBet = 0;
+  document.getElementById('bankSpan').innerText = newBalance.toLocaleString("en-GB");
+  document.getElementById('betSpan').innerText = '0';
+
+  let pnClass = numRed.includes(winningSpin) ? 'pnRed' : (winningSpin == 0 ? 'pnGreen' : 'pnBlack');
+  let pnContent = document.getElementById('pnContent');
+  let pnSpan = document.createElement('span');
+  pnSpan.setAttribute('class', pnClass);
+  pnSpan.innerText = winningSpin;
+  pnContent.append(pnSpan);
+  pnContent.scrollLeft = pnContent.scrollWidth;
+
+  bet = [];
+  numbersBet = [];
+  removeChips();
+  wager = lastWager;
+  if (newBalance === 0) gameOver();
+}
+
+
 
 function win(winningSpin, winValue, betTotal){
 	if(winValue > 0){
@@ -672,3 +737,7 @@ function removeChips(){
 		removeChips();
 	}
 }
+
+window.addEventListener('DOMContentLoaded', () => {
+  updateBalanceDisplay();
+});

@@ -39,30 +39,21 @@ router.get('/inside/crash', (req, res) => {
 }); 
 
 router.get('/garage', (req, res) => {
+  const guestUser = {
+    id: null,
+    username: 'user42069',
+    balance: 0
+  };
+
   if (!req.session.user) {
-    // Guest user
-    return res.render('garage', {
-      user: {
-        id: null,
-        username: 'user42069',
-        balance: 0
-      }
-    });
+    return res.render('garage', { user: guestUser });
   }
 
   db.get('SELECT username, balance FROM users WHERE id = ?', [req.session.user.id], (err, row) => {
     if (err || !row) {
-      // Fallback to guest if error or user not found
-      return res.render('garage', {
-        user: {
-          id: null,
-          username: 'user42069',
-          balance: 0
-        }
-      });
+      return res.render('garage', { user: guestUser });
     }
 
-    // Logged-in user
     req.session.user.balance = row.balance;
     res.render('garage', {
       user: {
@@ -75,11 +66,58 @@ router.get('/garage', (req, res) => {
 });
 
 
+// Add in your Express backend
+router.post('/api/roulette/spin', (req, res) => {
+  const { bets } = req.body;
+  const userId = req.session?.user?.id;
+
+  if (!userId || !Array.isArray(bets)) return res.status(400).send("Invalid");
+
+  const winningNumber = Math.floor(Math.random() * 37);
+  let payout = 0;
+  let totalBet = 0;
+
+  for (const bet of bets) {
+    const nums = bet.numbers.split(',').map(n => parseInt(n.trim()));
+    const hit = nums.includes(winningNumber);
+    totalBet += bet.amt;
+    if (hit) payout += bet.amt * bet.odds + bet.amt;
+  }
+
+  // Check balance and update in DB
+  db.get('SELECT balance FROM users WHERE id = ?', [userId], (err, row) => {
+    if (err || !row || row.balance < totalBet)
+      return res.status(400).send("Insufficient funds");
+
+    const newBalance = row.balance - totalBet + payout;
+    db.run('UPDATE users SET balance = ? WHERE id = ?', [newBalance, userId], () => {
+      res.json({ 
+        winningNumber,
+        payout,
+        totalBet,
+        newBalance
+      });
+    });
+  });
+});
+
+router.get('/api/user/balance', (req, res) => {
+  const userId = req.session?.user?.id;
+  if (!userId) return res.status(401).send('Not logged in');
+
+  db.get('SELECT balance FROM users WHERE id = ?', [userId], (err, row) => {
+    if (err || !row) return res.status(500).send('Error');
+    res.json({ balance: row.balance });
+  });
+});
+
+
+
 
 router.get('/mines', (req, res) => {
   res.render('mines', {
     defaultBet:    1,   // <— supply whatever defaults you want
-    defaultBombs:  3
+    defaultBombas:  3
   });
 });
 
