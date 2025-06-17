@@ -113,6 +113,7 @@ router.get('/api/user/balance', (req, res) => {
 
 
 
+
 router.get('/mines', (req, res) => {
   res.render('mines', {
     defaultBet:    1,   // <— supply whatever defaults you want
